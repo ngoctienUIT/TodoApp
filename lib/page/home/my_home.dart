@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:todo_app/page/new_todo/new_todo_page.dart';
 
 class MyHome extends StatelessWidget {
   const MyHome({Key? key, required this.action}) : super(key: key);
@@ -38,7 +39,14 @@ class MyHome extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewTodoPage(),
+            ),
+          );
+        },
         child: const Icon(Icons.add_rounded),
       ),
       body: SafeArea(

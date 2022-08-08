@@ -15,9 +15,9 @@ class _HomePageState extends State<HomePage> {
   double scale = 1;
   bool isOpenDraw = false;
 
-  void openDraw() => setState(() {
-        xOffset = 180;
-        yOffset = 50;
+  void openDraw({required double x, required double y}) => setState(() {
+        xOffset = x;
+        yOffset = y;
         scale = 0.8;
         isOpenDraw = true;
       });
@@ -59,7 +59,10 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(isOpenDraw ? 20 : 0),
                       child: MyHome(
                         action: () {
-                          openDraw();
+                          openDraw(
+                            x: MediaQuery.of(context).size.width * 0.5,
+                            y: MediaQuery.of(context).size.height * 0.1,
+                          );
                         },
                       ),
                     ),

@@ -10,7 +10,7 @@ class DrawerWidget extends StatelessWidget {
       backgroundColor: const Color.fromRGBO(14, 31, 85, 1),
       body: SafeArea(
         child: SizedBox(
-          width: 180,
+          width: MediaQuery.of(context).size.width * 0.5,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
