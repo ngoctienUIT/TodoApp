@@ -1,15 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/home/bloc/todo_bloc.dart';
+import 'package:todo_app/page/home/bloc/todo_event.dart';
+import 'package:uuid/uuid.dart';
 
-class NewTodoPage extends StatelessWidget {
-  NewTodoPage({Key? key}) : super(key: key);
+class NewTodoPage extends StatefulWidget {
+  const NewTodoPage({Key? key}) : super(key: key);
+
+  @override
+  State<NewTodoPage> createState() => _NewTodoPageState();
+}
+
+class _NewTodoPageState extends State<NewTodoPage> {
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () async {
+          BlocProvider.of<TodoBloc>(context).add(
+            AddEvent(
+              todo: Todo(
+                id: const Uuid().v1(),
+                content: _controller.text,
+                time: DateTime.now(),
+              ),
+            ),
+          );
+          Navigator.pop(context);
+        },
         label: Row(
           children: const [
             Text("New task"),

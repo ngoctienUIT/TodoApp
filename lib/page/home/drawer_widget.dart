@@ -1,9 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class DrawerWidget extends StatelessWidget {
+class DrawerWidget extends StatefulWidget {
   const DrawerWidget({Key? key}) : super(key: key);
 
+  @override
+  State<DrawerWidget> createState() => _DrawerWidgetState();
+}
+
+class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,24 +23,51 @@ class DrawerWidget extends StatelessWidget {
             children: [
               const SizedBox(height: 50),
               ClipOval(
-                child: Image.network(
-                  "https://i.pinimg.com/564x/29/c3/5c/29c35cc8e024cb2581dbfa797a551c8e.jpg",
-                  height: 100,
-                  width: 100,
-                ),
+                child: FirebaseAuth.instance.currentUser != null
+                    ? Image.network(
+                        FirebaseAuth.instance.currentUser!.photoURL.toString(),
+                        height: 100,
+                        width: 100,
+                      )
+                    : Image.asset(
+                        "assets/images/user.png",
+                        height: 100,
+                        width: 100,
+                      ),
               ),
               const SizedBox(height: 10),
-              const SizedBox(
-                width: 150,
-                child: Text(
-                  textAlign: TextAlign.center,
-                  "Trần Ngọc Tiến",
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
+              FirebaseAuth.instance.currentUser != null
+                  ? SizedBox(
+                      width: 150,
+                      child: Text(
+                        FirebaseAuth.instance.currentUser!.displayName
+                            .toString(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : ElevatedButton.icon(
+                      onPressed: () async {
+                        final GoogleSignInAccount? googleUser =
+                            await GoogleSignIn().signIn();
+
+                        final GoogleSignInAuthentication? googleAuth =
+                            await googleUser?.authentication;
+
+                        final credential = GoogleAuthProvider.credential(
+                          accessToken: googleAuth?.accessToken,
+                          idToken: googleAuth?.idToken,
+                        );
+
+                        await FirebaseAuth.instance
+                            .signInWithCredential(credential);
+                        setState(() {});
+                      },
+                      icon: const Icon(FontAwesomeIcons.google),
+                      label: const Text("Sign in Google")),
               const SizedBox(height: 20),
               drawerItem(
                   icon: FontAwesomeIcons.house, title: "Home", action: () {}),
@@ -52,10 +86,15 @@ class DrawerWidget extends StatelessWidget {
                   action: () {}),
               drawerItem(
                   icon: FontAwesomeIcons.gear, title: "Setting", action: () {}),
-              drawerItem(
-                  icon: FontAwesomeIcons.arrowRightFromBracket,
-                  title: "Log Out",
-                  action: () {}),
+              if (FirebaseAuth.instance.currentUser != null)
+                drawerItem(
+                    icon: FontAwesomeIcons.arrowRightFromBracket,
+                    title: "Log Out",
+                    action: () async {
+                      await FirebaseAuth.instance.signOut();
+                      await GoogleSignIn().signOut();
+                      setState(() {});
+                    }),
             ],
           ),
         ),
