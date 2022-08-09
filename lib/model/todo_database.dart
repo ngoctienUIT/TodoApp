@@ -30,7 +30,7 @@ class TodoDatabase {
   Future<int> insertTodo(Todo todo) async {
     int result = 0;
     final Database db = await initializeDB();
-    result = await db.insert(strTable, todo.toMap());
+    result = await db.insert(strTable, todo.toMapSQL());
     db.close();
     return result;
   }
@@ -39,7 +39,7 @@ class TodoDatabase {
     int result = 0;
     final Database db = await initializeDB();
     for (var todo in todoList) {
-      result = await db.insert(strTable, todo.toMap());
+      result = await db.insert(strTable, todo.toMapSQL());
     }
     db.close();
     return result;
@@ -73,7 +73,7 @@ class TodoDatabase {
     SET $strContent = ?, $strStatus = ? , $strTime = ?
     WHERE $strId = ?
     ''',
-        [todo.content, todo.status, todo.time.microsecondsSinceEpoch, todo.id]);
+        [todo.content, todo.status, todo.time.millisecondsSinceEpoch, todo.id]);
     return updateCount;
   }
 }

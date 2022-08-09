@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
@@ -16,11 +21,42 @@ class EditTodoPage extends StatefulWidget {
 
 class _EditTodoPageState extends State<EditTodoPage> {
   final TextEditingController _controller = TextEditingController();
+  List<String> images = [];
+  List<String> files = [];
+  List<PlatformFile> platformFiles = [];
 
   @override
   void initState() {
     super.initState();
+    images = widget.todo.images;
+    files = widget.todo.files;
     _controller.text = widget.todo.content;
+  }
+
+  Future pickFile() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      setState(() {
+        files.addAll(result.paths.map((path) => path!).toList());
+        widget.todo.files = files;
+        platformFiles.addAll(result.files);
+      });
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Future pickImage() async {
+    try {
+      final imageList = await ImagePicker().pickMultiImage();
+      if (imageList == null) return;
+      setState(() {
+        images.addAll(imageList.map((image) => image.path).toList());
+        widget.todo.images = images;
+      });
+    } on PlatformException catch (_) {}
   }
 
   @override
@@ -84,6 +120,42 @@ class _EditTodoPageState extends State<EditTodoPage> {
                   keyboardType: TextInputType.multiline,
                 ),
               ),
+              if (images.isNotEmpty)
+                ImageSlideshow(
+                  width: double.infinity,
+                  height: 200,
+                  children: List.generate(
+                    images.length,
+                    (index) => Image.file(File(images[index])),
+                  ),
+                ),
+              const SizedBox(height: 20),
+              if (files.isNotEmpty)
+                SizedBox(
+                  width: double.infinity,
+                  height: files.length * 55.0,
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: files.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                FontAwesomeIcons.fileLines,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(platformFiles[index].name),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -145,7 +217,8 @@ class _EditTodoPageState extends State<EditTodoPage> {
                     ),
                   )
                 ],
-              )
+              ),
+              const SizedBox(height: 50)
             ],
           ),
         ),

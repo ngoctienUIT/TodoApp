@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
@@ -15,10 +20,38 @@ class NewTodoPage extends StatefulWidget {
 
 class _NewTodoPageState extends State<NewTodoPage> {
   final TextEditingController _controller = TextEditingController();
+  List<String> images = [];
+  List<String> files = [];
+  List<PlatformFile> platformFiles = [];
+  DateTime dateTime = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future pickFile() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      setState(() {
+        files.addAll(result.paths.map((path) => path!).toList());
+        platformFiles.addAll(result.files);
+      });
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Future pickImage() async {
+    try {
+      final imageList = await ImagePicker().pickMultiImage();
+      if (imageList == null) return;
+      setState(() {
+        images.addAll(imageList.map((image) => image.path).toList());
+      });
+    } on PlatformException catch (_) {}
   }
 
   @override
@@ -29,10 +62,11 @@ class _NewTodoPageState extends State<NewTodoPage> {
           BlocProvider.of<TodoBloc>(context).add(
             AddEvent(
               todo: Todo(
-                id: const Uuid().v1(),
-                content: _controller.text,
-                time: DateTime.now(),
-              ),
+                  id: const Uuid().v1(),
+                  content: _controller.text,
+                  time: dateTime,
+                  images: images,
+                  files: files),
             ),
           );
           Navigator.pop(context);
@@ -87,13 +121,56 @@ class _NewTodoPageState extends State<NewTodoPage> {
                   keyboardType: TextInputType.multiline,
                 ),
               ),
+              if (images.isNotEmpty)
+                ImageSlideshow(
+                  width: double.infinity,
+                  height: 200,
+                  children: List.generate(
+                    images.length,
+                    (index) => Center(
+                      child: Hero(
+                        tag: "TNT",
+                        child: Image.file(
+                          File(images[index]),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+              if (files.isNotEmpty)
+                SizedBox(
+                  width: double.infinity,
+                  height: files.length * 55.0,
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: files.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                FontAwesomeIcons.fileLines,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(platformFiles[index].name),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               const SizedBox(height: 20),
               Row(
                 children: [
                   const Spacer(),
                   OutlinedButton.icon(
                     onPressed: () async {
-                      await pickDate(context);
+                      dateTime = (await pickDate(context))!;
                     },
                     style: OutlinedButton.styleFrom(
                       primary: const Color.fromRGBO(182, 190, 224, 1),
@@ -129,9 +206,9 @@ class _NewTodoPageState extends State<NewTodoPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {},
+                    onPressed: () async {
+                      await pickImage();
+                    },
                     icon: const Icon(
                       FontAwesomeIcons.image,
                       color: Color.fromRGBO(182, 190, 224, 1),
@@ -139,16 +216,17 @@ class _NewTodoPageState extends State<NewTodoPage> {
                   ),
                   const SizedBox(width: 20),
                   IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {},
+                    onPressed: () async {
+                      await pickFile();
+                    },
                     icon: const Icon(
                       FontAwesomeIcons.folderOpen,
                       color: Color.fromRGBO(182, 190, 224, 1),
                     ),
                   )
                 ],
-              )
+              ),
+              const SizedBox(height: 50)
             ],
           ),
         ),

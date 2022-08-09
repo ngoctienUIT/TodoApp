@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/edit_todo_page.dart';
@@ -44,7 +45,16 @@ class _ItemTodoState extends State<ItemTodo> {
               backgroundColor: const Color(0xFF7BC043),
               foregroundColor: Colors.white,
               icon: FontAwesomeIcons.penToSquare,
-              label: 'Edit',
+              borderRadius: BorderRadius.circular(10),
+            ),
+            SlidableAction(
+              onPressed: (context) async {
+                Share.share(widget.todo.content);
+              },
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              icon: FontAwesomeIcons.share,
+              borderRadius: BorderRadius.circular(10),
             ),
             SlidableAction(
               onPressed: (context) async {
@@ -55,7 +65,7 @@ class _ItemTodoState extends State<ItemTodo> {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
               icon: FontAwesomeIcons.trashCan,
-              label: 'Delete',
+              borderRadius: BorderRadius.circular(10),
             ),
           ],
         ),

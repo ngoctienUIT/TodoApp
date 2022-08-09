@@ -77,7 +77,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   action: () {}),
               drawerItem(
                   icon: Icons.grid_view,
-                  size: 20,
+                  size: 25,
                   title: "Category",
                   action: () {}),
               drawerItem(
@@ -106,7 +106,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       {required IconData icon,
       required String title,
       required Function action,
-      double size = 16}) {
+      double size = 20}) {
     return InkWell(
       onTap: () {
         action();
@@ -123,7 +123,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             const SizedBox(width: 10),
             Text(
               title,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 18),
             )
           ],
         ),

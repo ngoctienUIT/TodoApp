@@ -23,11 +23,20 @@ class Todo {
         "files": files
       };*/
 
+  Map<String, dynamic> toMapSQL() => {
+        "id": id,
+        "content": content,
+        "time": time.millisecondsSinceEpoch,
+        "status": status,
+      };
+
   Map<String, dynamic> toMap() => {
         "id": id,
         "content": content,
-        "time": 123,
+        "time": time,
         "status": status,
+        "files": files,
+        "images": images
       };
 
   factory Todo.fromMap(Map<String, dynamic> data) {
