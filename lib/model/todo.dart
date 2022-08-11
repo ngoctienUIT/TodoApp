@@ -39,14 +39,22 @@ class Todo {
         "images": images
       };
 
-  factory Todo.fromMap(Map<String, dynamic> data) {
+  factory Todo.fromMapSQL(Map<String, dynamic> data) {
     return Todo(
       id: data["id"],
       content: data["content"],
-      time: DateTime(data["time"]),
+      time: DateTime.now(), //DateTime(data["time"]),
       status: data["status"] == 0 ? false : true,
-      /*files: data["files"],
-        images: data["images"]*/
     );
   }
+
+  // factory Todo.fromMap(Map<String, dynamic> data) {
+  //   return Todo(
+  //       id: data["id"],
+  //       content: data["content"],
+  //       time: DateTime(data["time"]),
+  //       status: data["status"] == 0 ? false : true,
+  //       files: data["files"],
+  //       images: data["images"]);
+  // }
 }

@@ -9,9 +9,8 @@ import 'package:todo_app/page/home/bloc/todo_state.dart';
 import 'package:todo_app/page/home/widget/build_item.dart';
 
 class MyHome extends StatelessWidget {
-  MyHome({Key? key, required this.action}) : super(key: key);
+  const MyHome({Key? key, required this.action}) : super(key: key);
   final Function action;
-  final TodoDatabase todoDatabase = TodoDatabase();
 
   @override
   Widget build(BuildContext context) {

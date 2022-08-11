@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
@@ -22,7 +23,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
   final TextEditingController _controller = TextEditingController();
   List<String> images = [];
   List<String> files = [];
-  List<PlatformFile> platformFiles = [];
+  // List<PlatformFile> platformFiles = [];
   DateTime dateTime = DateTime.now();
 
   @override
@@ -37,7 +38,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
     if (result != null) {
       setState(() {
         files.addAll(result.paths.map((path) => path!).toList());
-        platformFiles.addAll(result.files);
+        // platformFiles.addAll(result.files);
       });
     } else {
       // User canceled the picker
@@ -156,7 +157,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
                                 color: Colors.red,
                               ),
                               const SizedBox(width: 10),
-                              Text(platformFiles[index].name),
+                              Text(basename(files[index])),
                             ],
                           ),
                         ),
