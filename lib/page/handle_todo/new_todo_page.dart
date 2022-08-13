@@ -1,13 +1,12 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/file_list_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/pick_time_widget.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
 import 'package:uuid/uuid.dart';
@@ -23,36 +22,15 @@ class _NewTodoPageState extends State<NewTodoPage> {
   final TextEditingController _controller = TextEditingController();
   List<String> images = [];
   List<String> files = [];
-  // List<PlatformFile> platformFiles = [];
   DateTime dateTime = DateTime.now();
+  SpeechToText speechToText = SpeechToText();
+  String lastWords = "Nói đi";
+  bool isListening = false;
+  int repeat = 0;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  Future pickFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
-
-    if (result != null) {
-      setState(() {
-        files.addAll(result.paths.map((path) => path!).toList());
-        // platformFiles.addAll(result.files);
-      });
-    } else {
-      // User canceled the picker
-    }
-  }
-
-  Future pickImage() async {
-    try {
-      final imageList = await ImagePicker().pickMultiImage();
-      if (imageList == null) return;
-      setState(() {
-        images.addAll(imageList.map((image) => image.path).toList());
-      });
-    } on PlatformException catch (_) {}
   }
 
   @override
@@ -66,6 +44,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
                   id: const Uuid().v1(),
                   content: _controller.text,
                   time: dateTime,
+                  repeat: repeat,
                   images: images,
                   files: files),
             ),
@@ -108,6 +87,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
                 ],
               ),
               const SizedBox(height: 20),
+              Text(lastWords),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
@@ -122,112 +102,32 @@ class _NewTodoPageState extends State<NewTodoPage> {
                   keyboardType: TextInputType.multiline,
                 ),
               ),
-              if (images.isNotEmpty)
-                ImageSlideshow(
-                  width: double.infinity,
-                  height: 200,
-                  children: List.generate(
-                    images.length,
-                    (index) => Center(
-                      child: Hero(
-                        tag: "TNT",
-                        child: Image.file(
-                          File(images[index]),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              if (images.isNotEmpty) fileListWidget(images),
               const SizedBox(height: 20),
-              if (files.isNotEmpty)
-                SizedBox(
-                  width: double.infinity,
-                  height: files.length * 55.0,
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: files.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                FontAwesomeIcons.fileLines,
-                                color: Colors.red,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(basename(files[index])),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+              if (files.isNotEmpty) imageListWidget(files),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  const Spacer(),
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      dateTime = (await pickDate(context))!;
-                    },
-                    style: OutlinedButton.styleFrom(
-                      primary: const Color.fromRGBO(182, 190, 224, 1),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20, horizontal: 15),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(90)),
-                      ),
-                    ),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: const Text("Today"),
-                  ),
-                  const SizedBox(width: 20),
-                  Container(
-                    width: 45,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: const Color.fromRGBO(182, 190, 224, 0.5)),
-                      borderRadius: BorderRadius.circular(90),
-                    ),
-                    child: Radio(
-                      value: 0,
-                      groupValue: 0,
-                      onChanged: (value) {},
-                    ),
-                  ),
-                  const Spacer(),
-                ],
+              pickTimeWidget(
+                context,
+                dateTime: dateTime,
+                getDate: (date) => setState(() {
+                  dateTime = date;
+                }),
+                getID: (id) => setState(() {
+                  repeat = id;
+                }),
+                id: repeat,
               ),
               const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      await pickImage();
-                    },
-                    icon: const Icon(
-                      FontAwesomeIcons.image,
-                      color: Color.fromRGBO(182, 190, 224, 1),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  IconButton(
-                    onPressed: () async {
-                      await pickFile();
-                    },
-                    icon: const Icon(
-                      FontAwesomeIcons.folderOpen,
-                      color: Color.fromRGBO(182, 190, 224, 1),
-                    ),
-                  )
-                ],
+              addFileWidget(
+                getImage: (list) => setState(() {
+                  images.addAll(list);
+                }),
+                getFile: (list) => setState(() {
+                  files.addAll(list);
+                }),
+                isListening: isListening,
               ),
-              const SizedBox(height: 50)
+              const SizedBox(height: 50),
             ],
           ),
         ),
@@ -235,14 +135,28 @@ class _NewTodoPageState extends State<NewTodoPage> {
     );
   }
 
-  Future<DateTime?> pickDate(BuildContext context) => showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100));
+  void startListening() async {
+    if (!isListening) {
+      bool check = await speechToText.initialize(
+        onStatus: (status) => print("status $status"),
+        onError: (errorNotification) => print("error $errorNotification"),
+      );
 
-  Future<TimeOfDay?> pickTime(BuildContext context) => showTimePicker(
-      context: context,
-      initialTime:
-          TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute));
+      if (check) {
+        setState(() {
+          isListening = true;
+        });
+        speechToText.listen(
+          onResult: (result) => setState(() {
+            lastWords = result.recognizedWords;
+          }),
+        );
+      }
+    } else {
+      setState(() {
+        isListening = false;
+      });
+      speechToText.stop();
+    }
+  }
 }

@@ -10,7 +10,7 @@ class TodoDatabase {
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (database, version) async {
         database.execute(
-            "create table Todo (id text, content text, time integer, status bool)");
+            "create table Todo (id text, content text, repeat integer, time text, status bool)");
 
         database
             .execute("create table Image (id text, idTodo text, link text)");

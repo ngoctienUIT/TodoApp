@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:todo_app/model/local_notification_manager.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/edit_todo_page.dart';
@@ -79,6 +80,8 @@ class _ItemTodoState extends State<ItemTodo> {
                     setState(() {
                       widget.todo.status = !widget.todo.status;
                       TodoDatabase().updateTodo(widget.todo);
+                      LocalNotificationManager.init()
+                          .cancelNotification(widget.todo.id.hashCode);
                     });
                   },
                   child: Container(

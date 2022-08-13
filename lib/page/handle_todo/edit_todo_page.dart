@@ -1,15 +1,13 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'package:todo_app/model/data_sql.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
+import 'package:todo_app/page/handle_todo/pick_file.dart';
+import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/custom_popup_menu.dart';
+import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
 
@@ -23,40 +21,11 @@ class EditTodoPage extends StatefulWidget {
 
 class _EditTodoPageState extends State<EditTodoPage> {
   final TextEditingController _controller = TextEditingController();
-  List<String> images = [];
-  List<String> files = [];
 
   @override
   void initState() {
     super.initState();
-    images = widget.todo.images;
-    files = widget.todo.files;
     _controller.text = widget.todo.content;
-  }
-
-  Future pickFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
-
-    if (result != null) {
-      setState(() {
-        files.addAll(result.paths.map((path) => path!).toList());
-        widget.todo.files = files;
-      });
-    } else {
-      // User canceled the picker
-    }
-  }
-
-  Future pickImage() async {
-    try {
-      final imageList = await ImagePicker().pickMultiImage();
-      if (imageList == null) return;
-      setState(() {
-        images.addAll(imageList.map((image) => image.path).toList());
-        widget.todo.images = images;
-      });
-    } on PlatformException catch (_) {}
   }
 
   @override
@@ -125,16 +94,8 @@ class _EditTodoPageState extends State<EditTodoPage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data!.isNotEmpty) {
-                      return ImageSlideshow(
-                        width: double.infinity,
-                        height: 200,
-                        children: List.generate(
-                          snapshot.data!.length,
-                          (index) => Image.file(
-                            File(snapshot.data![index].link),
-                          ),
-                        ),
-                      );
+                      return imageListWidget(
+                          snapshot.data!.map((data) => data.link).toList());
                     }
                   }
                   return Container();
@@ -145,31 +106,8 @@ class _EditTodoPageState extends State<EditTodoPage> {
                   future: TodoDatabase().getFileData(widget.todo.id),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return SizedBox(
-                        width: double.infinity,
-                        height: snapshot.data!.length * 55.0,
-                        child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      FontAwesomeIcons.fileLines,
-                                      color: Colors.red,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(basename(snapshot.data![index].link)),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
+                      return imageListWidget(
+                          snapshot.data!.map((data) => data.link).toList());
                     }
                     return Container();
                   }),
@@ -179,7 +117,12 @@ class _EditTodoPageState extends State<EditTodoPage> {
                   const Spacer(),
                   OutlinedButton.icon(
                     onPressed: () async {
-                      await pickDate(context);
+                      var date = await pickDate(context, widget.todo.time);
+                      if (date != null) {
+                        setState(() {
+                          widget.todo.time = date;
+                        });
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       primary: const Color.fromRGBO(182, 190, 224, 1),
@@ -192,48 +135,24 @@ class _EditTodoPageState extends State<EditTodoPage> {
                     icon: const Icon(Icons.calendar_month_outlined),
                     label: const Text("Today"),
                   ),
-                  const SizedBox(width: 20),
-                  Container(
-                    width: 45,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: const Color.fromRGBO(182, 190, 224, 0.5)),
-                      borderRadius: BorderRadius.circular(90),
-                    ),
-                    child: Radio(
-                      value: 0,
-                      groupValue: 0,
-                      onChanged: (value) {},
-                    ),
-                  ),
+                  const Spacer(),
+                  customPopupMenu((index) {
+                    setState(() {
+                      widget.todo.repeat = index;
+                    });
+                  }, widget.todo.repeat),
                   const Spacer(),
                 ],
               ),
               const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {},
-                    icon: const Icon(
-                      FontAwesomeIcons.image,
-                      color: Color.fromRGBO(182, 190, 224, 1),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {},
-                    icon: const Icon(
-                      FontAwesomeIcons.folderOpen,
-                      color: Color.fromRGBO(182, 190, 224, 1),
-                    ),
-                  )
-                ],
+              addFileWidget(
+                getImage: (list) => setState(() {
+                  widget.todo.images.addAll(list);
+                }),
+                getFile: (list) => setState(() {
+                  widget.todo.files.addAll(list);
+                }),
+                isListening: true,
               ),
               const SizedBox(height: 50)
             ],
@@ -242,15 +161,4 @@ class _EditTodoPageState extends State<EditTodoPage> {
       ),
     );
   }
-
-  Future<DateTime?> pickDate(BuildContext context) => showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100));
-
-  Future<TimeOfDay?> pickTime(BuildContext context) => showTimePicker(
-      context: context,
-      initialTime:
-          TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute));
 }
