@@ -28,11 +28,13 @@ class _NewTodoPageState extends State<NewTodoPage> {
   bool isListening = false;
   int repeat = 0;
   late Todo todo;
+  late Color color;
 
   @override
   void initState() {
     super.initState();
     dateTime = DateTime.now();
+    color = Colors.white;
   }
 
   @override
@@ -48,6 +50,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
                   time: dateTime,
                   repeat: repeat,
                   images: images,
+                  color: color,
                   files: files),
             ),
           );
@@ -120,14 +123,18 @@ class _NewTodoPageState extends State<NewTodoPage> {
                 id: repeat,
               ),
               const SizedBox(height: 30),
-              addFileWidget(
+              AddFileWidget(
                 getImage: (list) => setState(() {
                   images.addAll(list);
                 }),
                 getFile: (list) => setState(() {
                   files.addAll(list);
                 }),
-                isListening: isListening,
+                getColor: (color) {
+                  setState(() {
+                    this.color = color;
+                  });
+                },
               ),
               const SizedBox(height: 50),
             ],

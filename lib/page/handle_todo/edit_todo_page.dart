@@ -145,14 +145,18 @@ class _EditTodoPageState extends State<EditTodoPage> {
                 ],
               ),
               const SizedBox(height: 30),
-              addFileWidget(
+              AddFileWidget(
                 getImage: (list) => setState(() {
                   widget.todo.images.addAll(list);
                 }),
                 getFile: (list) => setState(() {
                   widget.todo.files.addAll(list);
                 }),
-                isListening: true,
+                getColor: (color) {
+                  setState(() {
+                    widget.todo.color = color;
+                  });
+                },
               ),
               const SizedBox(height: 50)
             ],

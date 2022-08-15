@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Todo {
@@ -8,11 +9,13 @@ class Todo {
   bool status;
   List<String> images;
   List<String> files;
+  Color color;
 
   Todo(
       {required this.id,
       required this.content,
       required this.time,
+      this.color = Colors.white,
       this.repeat = 0,
       this.status = false,
       this.files = const [],
@@ -25,7 +28,8 @@ class Todo {
         "time": time,
         "status": status,
         "images": images,
-        "files": files
+        "files": files,
+        "color": color.value
       };
 
   Map<String, dynamic> toMapSQL() => {
@@ -34,6 +38,7 @@ class Todo {
         "repeat": repeat,
         "time": DateFormat("dd/MM/yyyy").format(time),
         "status": status,
+        "color": color.value
       };
 
   factory Todo.fromMapSQL(Map<String, dynamic> data) {
@@ -43,6 +48,7 @@ class Todo {
       repeat: data["repeat"],
       time: DateFormat("dd/MM/yyyy").parse(data["time"]),
       status: data["status"] == 0 ? false : true,
+      color: Color(data["color"]),
     );
   }
 
