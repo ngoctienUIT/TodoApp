@@ -80,8 +80,15 @@ class _ItemTodoState extends State<ItemTodo> {
                     setState(() {
                       widget.todo.status = !widget.todo.status;
                       TodoDatabase().updateTodo(widget.todo);
-                      LocalNotificationManager.init()
+
+                      LocalNotificationManager localNotificationManager =
+                          LocalNotificationManager.init();
+                      localNotificationManager
                           .cancelNotification(widget.todo.id.hashCode);
+                      localNotificationManager.showNotification(
+                          id: widget.todo.id.hashCode - 1,
+                          title: "Hoàn thành",
+                          body: widget.todo.content);
                     });
                   },
                   child: Container(

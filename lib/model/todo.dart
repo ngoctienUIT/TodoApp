@@ -41,7 +41,7 @@ class Todo {
       id: data["id"],
       content: data["content"],
       repeat: data["repeat"],
-      time: DateTime.now(), //DateTime(data["time"]),
+      time: DateFormat("dd/MM/yyyy").parse(data["time"]),
       status: data["status"] == 0 ? false : true,
     );
   }

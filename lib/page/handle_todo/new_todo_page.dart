@@ -22,15 +22,17 @@ class _NewTodoPageState extends State<NewTodoPage> {
   final TextEditingController _controller = TextEditingController();
   List<String> images = [];
   List<String> files = [];
-  DateTime dateTime = DateTime.now();
+  late DateTime dateTime;
   SpeechToText speechToText = SpeechToText();
   String lastWords = "Nói đi";
   bool isListening = false;
   int repeat = 0;
+  late Todo todo;
 
   @override
   void initState() {
     super.initState();
+    dateTime = DateTime.now();
   }
 
   @override

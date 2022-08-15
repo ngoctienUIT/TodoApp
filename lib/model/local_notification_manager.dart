@@ -84,12 +84,13 @@ class LocalNotificationManager {
       {int id = 0,
       String title = "",
       String body = "",
-      String payload = "payload"}) async {
+      String payload = "payload",
+      RepeatInterval repeat = RepeatInterval.everyMinute}) async {
     flutterLocalNotificationsPlugin.periodicallyShow(
         id,
         title,
         body,
-        RepeatInterval.everyMinute,
+        repeat,
         const NotificationDetails(
           android: AndroidNotificationDetails("channel id 2", "channel name 2",
               playSound: true,

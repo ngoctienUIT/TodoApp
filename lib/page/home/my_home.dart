@@ -1,6 +1,8 @@
+import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/new_todo_page.dart';
@@ -8,9 +10,22 @@ import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_state.dart';
 import 'package:todo_app/page/home/widget/build_item.dart';
 
-class MyHome extends StatelessWidget {
+class MyHome extends StatefulWidget {
   const MyHome({Key? key, required this.action}) : super(key: key);
   final Function action;
+
+  @override
+  State<MyHome> createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> {
+  late DateTime now;
+
+  @override
+  void initState() {
+    super.initState();
+    now = DateTime.now();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +34,7 @@ class MyHome extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         iconTheme: const IconThemeData(
-            color: Color.fromRGBO(159, 161, 184, 1), size: 20),
+            color: Color.fromRGBO(159, 161, 184, 1), size: 25),
         backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
         actions: [
           IconButton(
@@ -39,7 +54,7 @@ class MyHome extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           onPressed: () {
-            action();
+            widget.action();
           },
           icon: const Icon(FontAwesomeIcons.bars),
         ),
@@ -70,20 +85,30 @@ class MyHome extends StatelessWidget {
                   color: Color.fromRGBO(77, 80, 108, 1),
                 ),
               ),
-              const SizedBox(height: 30),
-              const Text(
-                "Category",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              Text(
+                DateFormat.yMMMMd().format(DateTime.now()),
+                style: const TextStyle(
+                  fontSize: 30,
                   color: Color.fromRGBO(156, 166, 201, 1),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 5),
               const Text(
-                "TODAY'S TASK",
-                style: TextStyle(
-                  color: Color.fromRGBO(156, 166, 201, 1),
-                ),
+                "Today",
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 20),
+              DatePicker(
+                DateTime.now(),
+                initialSelectedDate: DateTime.now(),
+                selectionColor: Colors.black,
+                selectedTextColor: Colors.white,
+                onDateChange: (date) {
+                  setState(() {
+                    now = date;
+                  });
+                },
               ),
               Expanded(
                 child: BlocBuilder<TodoBloc, TodoState>(
@@ -103,7 +128,10 @@ class MyHome extends StatelessWidget {
                     }
 
                     if (state is Success) {
-                      return buildItem(state.list);
+                      return buildItem(state.list
+                          .where((element) =>
+                              element.time.difference(now).inDays == 0)
+                          .toList());
                     }
 
                     return const Center(child: Text("Không có dữ liệu"));

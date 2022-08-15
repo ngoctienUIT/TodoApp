@@ -1,7 +1,8 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todo_app/page/handle_todo/pick_file.dart';
+import 'package:todo_app/page/handle_todo/pick_function.dart';
 
 Widget addFileWidget(
     {required Function(List<String>) getImage,
@@ -45,6 +46,14 @@ Widget addFileWidget(
         },
         icon: const Icon(
           FontAwesomeIcons.folderOpen,
+          color: Color.fromRGBO(182, 190, 224, 1),
+        ),
+      ),
+      const SizedBox(width: 20),
+      IconButton(
+        onPressed: () {},
+        icon: const Icon(
+          FontAwesomeIcons.palette,
           color: Color.fromRGBO(182, 190, 224, 1),
         ),
       )
