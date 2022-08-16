@@ -22,7 +22,8 @@ class _NewTodoPageState extends State<NewTodoPage> {
   final TextEditingController _controller = TextEditingController();
   List<String> images = [];
   List<String> files = [];
-  late DateTime dateTime;
+  late DateTime startTime;
+  late DateTime finishTime;
   SpeechToText speechToText = SpeechToText();
   String lastWords = "Nói đi";
   bool isListening = false;
@@ -33,7 +34,8 @@ class _NewTodoPageState extends State<NewTodoPage> {
   @override
   void initState() {
     super.initState();
-    dateTime = DateTime.now();
+    startTime = DateTime.now();
+    finishTime = DateTime.now();
     color = Colors.white;
   }
 
@@ -47,7 +49,8 @@ class _NewTodoPageState extends State<NewTodoPage> {
               todo: Todo(
                   id: const Uuid().v1(),
                   content: _controller.text,
-                  time: dateTime,
+                  startTime: startTime,
+                  finishTime: finishTime,
                   repeat: repeat,
                   images: images,
                   color: color,
@@ -113,9 +116,13 @@ class _NewTodoPageState extends State<NewTodoPage> {
               const SizedBox(height: 20),
               pickTimeWidget(
                 context,
-                dateTime: dateTime,
-                getDate: (date) => setState(() {
-                  dateTime = date;
+                startTime: startTime,
+                finishTime: finishTime,
+                getStartTime: (date) => setState(() {
+                  startTime = date;
+                }),
+                getFinishTime: (date) => setState(() {
+                  finishTime = date;
                 }),
                 getID: (id) => setState(() {
                   repeat = id;

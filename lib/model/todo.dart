@@ -4,17 +4,19 @@ import 'package:intl/intl.dart';
 class Todo {
   String id;
   String content;
-  DateTime time;
+  DateTime startTime;
+  DateTime finishTime;
   int repeat;
   bool status;
+  Color color;
   List<String> images;
   List<String> files;
-  Color color;
 
   Todo(
       {required this.id,
       required this.content,
-      required this.time,
+      required this.startTime,
+      required this.finishTime,
       this.color = Colors.white,
       this.repeat = 0,
       this.status = false,
@@ -25,7 +27,8 @@ class Todo {
         "id": id,
         "content": content,
         "repeat": repeat,
-        "time": time,
+        "startTime": startTime,
+        "finishTime": finishTime,
         "status": status,
         "images": images,
         "files": files,
@@ -36,7 +39,8 @@ class Todo {
         "id": id,
         "content": content,
         "repeat": repeat,
-        "time": DateFormat("dd/MM/yyyy").format(time),
+        "startTime": DateFormat("dd/MM/yyyy").format(startTime),
+        "finishTime": DateFormat("dd/MM/yyyy").format(finishTime),
         "status": status,
         "color": color.value
       };
@@ -46,7 +50,8 @@ class Todo {
       id: data["id"],
       content: data["content"],
       repeat: data["repeat"],
-      time: DateFormat("dd/MM/yyyy").parse(data["time"]),
+      startTime: DateFormat("dd/MM/yyyy").parse(data["startTime"]),
+      finishTime: DateFormat("dd/MM/yyyy").parse(data["finishTime"]),
       status: data["status"] == 0 ? false : true,
       color: Color(data["color"]),
     );

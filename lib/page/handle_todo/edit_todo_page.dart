@@ -4,10 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:todo_app/model/data_sql.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
-import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
-import 'package:todo_app/page/handle_todo/widget/custom_popup_menu.dart';
 import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/pick_time_widget.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
 
@@ -112,37 +111,20 @@ class _EditTodoPageState extends State<EditTodoPage> {
                     return Container();
                   }),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  const Spacer(),
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      var date = await pickDate(context, widget.todo.time);
-                      if (date != null) {
-                        setState(() {
-                          widget.todo.time = date;
-                        });
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      primary: const Color.fromRGBO(182, 190, 224, 1),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20, horizontal: 15),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(90)),
-                      ),
-                    ),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: const Text("Today"),
-                  ),
-                  const Spacer(),
-                  customPopupMenu((index) {
-                    setState(() {
-                      widget.todo.repeat = index;
-                    });
-                  }, widget.todo.repeat),
-                  const Spacer(),
-                ],
+              pickTimeWidget(
+                context,
+                startTime: widget.todo.startTime,
+                finishTime: widget.todo.finishTime,
+                getStartTime: (date) => setState(() {
+                  widget.todo.startTime = date;
+                }),
+                getFinishTime: (date) => setState(() {
+                  widget.todo.finishTime = date;
+                }),
+                getID: (id) => setState(() {
+                  widget.todo.repeat = id;
+                }),
+                id: widget.todo.repeat,
               ),
               const SizedBox(height: 30),
               AddFileWidget(

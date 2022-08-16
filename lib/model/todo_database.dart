@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/model/data_sql.dart';
@@ -10,7 +11,7 @@ class TodoDatabase {
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (database, version) async {
         database.execute(
-            "create table Todo (id text, content text, repeat integer, time text, status bool, color integer)");
+            "create table Todo (id text, content text, repeat integer, startTime text, finishTime text, status bool, color integer)");
 
         database
             .execute("create table Image (id text, idTodo text, link text)");
@@ -64,9 +65,16 @@ class TodoDatabase {
     final db = await initializeDB();
     int updateCount = await db.rawUpdate('''
     UPDATE Todo 
-    SET content = ?, status = ? , time = ?
-    WHERE id = ?''',
-        [todo.content, todo.status, todo.time.millisecondsSinceEpoch, todo.id]);
+    SET content = ?, status = ? , startTime = ?, finishTime = ?, color = ?, repeat = ?
+    WHERE id = ?''', [
+      todo.content,
+      todo.status,
+      DateFormat("dd/MM/yyyy").format(todo.startTime),
+      DateFormat("dd/MM/yyyy").format(todo.finishTime),
+      todo.color.value,
+      todo.repeat,
+      todo.id
+    ]);
     return updateCount;
   }
 

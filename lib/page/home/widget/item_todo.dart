@@ -71,6 +71,7 @@ class _ItemTodoState extends State<ItemTodo> {
           ],
         ),
         child: Card(
+          color: widget.todo.color,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             child: Row(

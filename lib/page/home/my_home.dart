@@ -20,12 +20,18 @@ class MyHome extends StatefulWidget {
 
 class _MyHomeState extends State<MyHome> {
   late DateTime now;
+  late bool filter;
 
   @override
   void initState() {
     super.initState();
     now = DateTime.now();
+    filter = true;
   }
+
+  bool checkDate(DateTime startTime, DateTime finishTime) =>
+      finishTime.difference(now).inDays >= 0 &&
+      now.difference(startTime).inDays >= 0;
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +46,14 @@ class _MyHomeState extends State<MyHome> {
           IconButton(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
-            onPressed: () {},
-            icon: const Icon(FontAwesomeIcons.magnifyingGlass),
+            onPressed: () {
+              setState(() {
+                filter = !filter;
+              });
+            },
+            icon: Icon(filter
+                ? FontAwesomeIcons.listCheck
+                : FontAwesomeIcons.calendarDays),
           ),
           IconButton(
             splashColor: Colors.transparent,
@@ -99,17 +111,18 @@ class _MyHomeState extends State<MyHome> {
                 style: TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 20),
-              DatePicker(
-                DateTime.now(),
-                initialSelectedDate: DateTime.now(),
-                selectionColor: Colors.black,
-                selectedTextColor: Colors.white,
-                onDateChange: (date) {
-                  setState(() {
-                    now = date;
-                  });
-                },
-              ),
+              if (filter)
+                DatePicker(
+                  DateTime.now(),
+                  initialSelectedDate: DateTime.now(),
+                  selectionColor: Colors.black,
+                  selectedTextColor: Colors.white,
+                  onDateChange: (date) {
+                    setState(() {
+                      now = date;
+                    });
+                  },
+                ),
               Expanded(
                 child: BlocBuilder<TodoBloc, TodoState>(
                   builder: (context, state) {
@@ -118,7 +131,12 @@ class _MyHomeState extends State<MyHome> {
                         future: TodoDatabase().getData(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return buildItem(snapshot.data!);
+                            return buildItem(snapshot.data!
+                                .where((element) =>
+                                    !filter ||
+                                    checkDate(
+                                        element.startTime, element.finishTime))
+                                .toList());
                           }
 
                           return const Center(
@@ -130,7 +148,8 @@ class _MyHomeState extends State<MyHome> {
                     if (state is Success) {
                       return buildItem(state.list
                           .where((element) =>
-                              element.time.difference(now).inDays == 0)
+                              !filter ||
+                              checkDate(element.startTime, element.finishTime))
                           .toList());
                     }
 
