@@ -134,8 +134,7 @@ class _MyHomeState extends State<MyHome> {
                             return buildItem(snapshot.data!
                                 .where((element) =>
                                     !filter ||
-                                    checkDate(
-                                        element.startTime, element.finishTime))
+                                    checkDate(element.date, element.date))
                                 .toList());
                           }
 
@@ -148,8 +147,7 @@ class _MyHomeState extends State<MyHome> {
                     if (state is Success) {
                       return buildItem(state.list
                           .where((element) =>
-                              !filter ||
-                              checkDate(element.startTime, element.finishTime))
+                              !filter || checkDate(element.date, element.date))
                           .toList());
                     }
 

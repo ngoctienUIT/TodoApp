@@ -4,14 +4,60 @@ import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/handle_todo/widget/custom_popup_menu.dart';
 
 Widget pickTimeWidget(BuildContext context,
-    {required Function(DateTime dateTime) getStartTime,
-    required Function(DateTime dateTime) getFinishTime,
+    {required Function(TimeOfDay dateTime) getStartTime,
+    required Function(TimeOfDay dateTime) getFinishTime,
     required Function(int id) getID,
-    required DateTime startTime,
-    required DateTime finishTime,
+    required Function(DateTime dateTime) getDate,
+    required TimeOfDay startTime,
+    required TimeOfDay finishTime,
+    required DateTime dateTime,
     int id = 0}) {
   return Column(
     children: [
+      Row(
+        children: [
+          const Spacer(),
+          InkWell(
+            onTap: () async {
+              var date = await pickDate(context, initDate: dateTime);
+              if (date != null) {
+                getDate(date);
+              }
+            },
+            child: Container(
+              height: 65,
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border:
+                    Border.all(color: const Color.fromRGBO(182, 190, 224, 1)),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.calendar_month_outlined,
+                      color: Color.fromRGBO(182, 190, 224, 1)),
+                  const SizedBox(width: 10),
+                  Text(
+                    dateTime.difference(DateTime.now()).inDays == 0
+                        ? "Today"
+                        : DateFormat("dd/MM/yyyy").format(dateTime),
+                    style: const TextStyle(
+                        color: Color.fromRGBO(182, 190, 224, 1)),
+                  )
+                ],
+              ),
+            ),
+          ),
+          const Spacer(),
+          customPopupMenu((id) {
+            getID(id);
+          }, id),
+          const Spacer(),
+        ],
+      ),
+      const SizedBox(height: 30),
       Row(
         children: [
           const Spacer(),
@@ -28,12 +74,9 @@ Widget pickTimeWidget(BuildContext context,
               const SizedBox(height: 10),
               OutlinedButton.icon(
                 onPressed: () async {
-                  var date = await pickDate(context, initDate: startTime);
-                  if (date != null) {
-                    getStartTime(date);
-                    if (date.difference(finishTime).inDays >= 0) {
-                      getFinishTime(date);
-                    }
+                  var time = await pickTime(context);
+                  if (time != null) {
+                    getStartTime(time);
                   }
                 },
                 style: OutlinedButton.styleFrom(
@@ -45,11 +88,7 @@ Widget pickTimeWidget(BuildContext context,
                   ),
                 ),
                 icon: const Icon(Icons.calendar_month_outlined),
-                label: Text(
-                  startTime.difference(DateTime.now()).inDays == 0
-                      ? "Today"
-                      : DateFormat("dd/MM/yyyy").format(startTime),
-                ),
+                label: Text(timeOfDateToString(startTime)),
               ),
             ],
           ),
@@ -67,10 +106,9 @@ Widget pickTimeWidget(BuildContext context,
               const SizedBox(height: 10),
               OutlinedButton.icon(
                 onPressed: () async {
-                  var date = await pickDate(context,
-                      initDate: finishTime, firstDate: startTime);
-                  if (date != null) {
-                    getFinishTime(date);
+                  var time = await pickTime(context);
+                  if (time != null) {
+                    getFinishTime(time);
                   }
                 },
                 style: OutlinedButton.styleFrom(
@@ -82,11 +120,7 @@ Widget pickTimeWidget(BuildContext context,
                   ),
                 ),
                 icon: const Icon(Icons.calendar_month_outlined),
-                label: Text(
-                  finishTime.difference(DateTime.now()).inDays == 0
-                      ? "Today"
-                      : DateFormat("dd/MM/yyyy").format(finishTime),
-                ),
+                label: Text(timeOfDateToString(finishTime)),
               ),
             ],
           ),
@@ -94,9 +128,6 @@ Widget pickTimeWidget(BuildContext context,
         ],
       ),
       const SizedBox(height: 30),
-      customPopupMenu((id) {
-        getID(id);
-      }, id),
     ],
   );
 }

@@ -19,24 +19,30 @@ class NewTodoPage extends StatefulWidget {
 }
 
 class _NewTodoPageState extends State<NewTodoPage> {
-  final TextEditingController _controller = TextEditingController();
-  List<String> images = [];
-  List<String> files = [];
-  late DateTime startTime;
-  late DateTime finishTime;
+  final TextEditingController _contentController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  late Todo todo;
   SpeechToText speechToText = SpeechToText();
   String lastWords = "Nói đi";
   bool isListening = false;
-  int repeat = 0;
-  late Todo todo;
-  late Color color;
 
   @override
   void initState() {
     super.initState();
-    startTime = DateTime.now();
-    finishTime = DateTime.now();
-    color = Colors.white;
+    todo = Todo(
+        id: const Uuid().v1(),
+        title: "",
+        content: "",
+        date: DateTime.now(),
+        startTime: TimeOfDay.now(),
+        finishTime: TimeOfDay.now(),
+        color: Colors.white);
+    _titleController.addListener(() {
+      todo.title = _titleController.text;
+    });
+    _contentController.addListener(() {
+      todo.content = _contentController.text;
+    });
   }
 
   @override
@@ -45,17 +51,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           BlocProvider.of<TodoBloc>(context).add(
-            AddEvent(
-              todo: Todo(
-                  id: const Uuid().v1(),
-                  content: _controller.text,
-                  startTime: startTime,
-                  finishTime: finishTime,
-                  repeat: repeat,
-                  images: images,
-                  color: color,
-                  files: files),
-            ),
+            AddEvent(todo: todo),
           );
           Navigator.pop(context);
         },
@@ -78,28 +74,45 @@ class _NewTodoPageState extends State<NewTodoPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      primary: Colors.black87,
-                      fixedSize: const Size(55, 55),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(90)),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: _titleController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          labelStyle: TextStyle(fontSize: 16),
+                          hintStyle: TextStyle(fontSize: 16),
+                          hintText: 'Title',
+                        ),
+                        maxLines: 1,
+                        keyboardType: TextInputType.multiline,
                       ),
                     ),
-                    child: const Icon(Icons.close_rounded),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromRGBO(182, 190, 224, 0.5),
+                          ),
+                          borderRadius: BorderRadius.circular(90)),
+                      child: const Icon(Icons.close_rounded),
+                    ),
                   ),
                   const SizedBox(width: 30),
                 ],
               ),
               const SizedBox(height: 20),
-              Text(lastWords),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  controller: _controller,
+                  controller: _contentController,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     labelStyle: TextStyle(fontSize: 16),
@@ -110,36 +123,40 @@ class _NewTodoPageState extends State<NewTodoPage> {
                   keyboardType: TextInputType.multiline,
                 ),
               ),
-              if (images.isNotEmpty) fileListWidget(images),
+              if (todo.images.isNotEmpty) fileListWidget(todo.images),
               const SizedBox(height: 20),
-              if (files.isNotEmpty) imageListWidget(files),
+              if (todo.files.isNotEmpty) imageListWidget(todo.files),
               const SizedBox(height: 20),
               pickTimeWidget(
                 context,
-                startTime: startTime,
-                finishTime: finishTime,
-                getStartTime: (date) => setState(() {
-                  startTime = date;
+                dateTime: todo.date,
+                startTime: todo.startTime,
+                finishTime: todo.finishTime,
+                getDate: (date) => setState(() {
+                  todo.date = date;
                 }),
-                getFinishTime: (date) => setState(() {
-                  finishTime = date;
+                getStartTime: (time) => setState(() {
+                  todo.startTime = time;
+                }),
+                getFinishTime: (time) => setState(() {
+                  todo.finishTime = time;
                 }),
                 getID: (id) => setState(() {
-                  repeat = id;
+                  todo.repeat = id;
                 }),
-                id: repeat,
+                id: todo.repeat,
               ),
               const SizedBox(height: 30),
               AddFileWidget(
                 getImage: (list) => setState(() {
-                  images.addAll(list);
+                  todo.images.addAll(list);
                 }),
                 getFile: (list) => setState(() {
-                  files.addAll(list);
+                  todo.files.addAll(list);
                 }),
                 getColor: (color) {
                   setState(() {
-                    this.color = color;
+                    todo.color = color;
                   });
                 },
               ),

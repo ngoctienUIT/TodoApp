@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/model/data_sql.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:uuid/uuid.dart';
 
 class TodoDatabase {
@@ -11,7 +12,7 @@ class TodoDatabase {
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (database, version) async {
         database.execute(
-            "create table Todo (id text, content text, repeat integer, startTime text, finishTime text, status bool, color integer)");
+            "create table Todo (id text, title text, content text, repeat integer, date text, startTime text, finishTime text, status bool, color integer)");
 
         database
             .execute("create table Image (id text, idTodo text, link text)");
@@ -65,12 +66,15 @@ class TodoDatabase {
     final db = await initializeDB();
     int updateCount = await db.rawUpdate('''
     UPDATE Todo 
-    SET content = ?, status = ? , startTime = ?, finishTime = ?, color = ?, repeat = ?
+    SET title = ?, content = ?, status = ?, date = ?, startTime = ?, finishTime = ?, color = ?, repeat = ?
     WHERE id = ?''', [
       todo.content,
       todo.status,
-      DateFormat("dd/MM/yyyy").format(todo.startTime),
-      DateFormat("dd/MM/yyyy").format(todo.finishTime),
+      DateFormat("dd/MM/yyyy").format(todo.date),
+      todo.startTime.toString(),
+      todo.finishTime.toString(),
+      timeOfDateToString(todo.startTime),
+      timeOfDateToString(todo.finishTime),
       todo.color.value,
       todo.repeat,
       todo.id

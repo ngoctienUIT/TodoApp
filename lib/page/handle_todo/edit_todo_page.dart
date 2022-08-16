@@ -115,11 +115,15 @@ class _EditTodoPageState extends State<EditTodoPage> {
                 context,
                 startTime: widget.todo.startTime,
                 finishTime: widget.todo.finishTime,
-                getStartTime: (date) => setState(() {
-                  widget.todo.startTime = date;
+                dateTime: widget.todo.date,
+                getDate: (date) => setState(() {
+                  widget.todo.date = date;
                 }),
-                getFinishTime: (date) => setState(() {
-                  widget.todo.finishTime = date;
+                getStartTime: (startTime) => setState(() {
+                  widget.todo.startTime = startTime;
+                }),
+                getFinishTime: (finishTime) => setState(() {
+                  widget.todo.finishTime = finishTime;
                 }),
                 getID: (id) => setState(() {
                   widget.todo.repeat = id;

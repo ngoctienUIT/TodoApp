@@ -25,9 +25,42 @@ Future<List<String>> pickImage() async {
 }
 
 Future<DateTime?> pickDate(BuildContext context,
-        {required DateTime initDate, DateTime? firstDate}) =>
+        {required DateTime initDate}) =>
     showDatePicker(
-        context: context,
-        initialDate: initDate,
-        firstDate: firstDate ?? DateTime.now(),
-        lastDate: DateTime(2100));
+      context: context,
+      initialDate: initDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+Future<TimeOfDay?> pickTime(BuildContext context) => showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+String timeOfDateToString(TimeOfDay time) {
+  String timeString = "";
+  if (time.hour < 10) {
+    timeString += "0${time.hour}:";
+  } else {
+    timeString += "${time.hour}:";
+  }
+  if (time.minute < 10) {
+    timeString += "0${time.minute}";
+  } else {
+    timeString += "${time.minute}";
+  }
+  return timeString;
+}
+
+TimeOfDay stringToTimeOfDate(String time) {
+  int hour = int.parse(time.substring(0, 2));
+  int minute = int.parse(time.substring(3, 5));
+  return TimeOfDay(hour: hour, minute: minute);
+}
