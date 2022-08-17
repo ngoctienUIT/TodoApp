@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/new_todo_page.dart';
+import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_state.dart';
 import 'package:todo_app/page/home/widget/build_item.dart';
@@ -25,13 +26,9 @@ class _MyHomeState extends State<MyHome> {
   @override
   void initState() {
     super.initState();
-    now = DateTime.now();
+    now = getDateNow();
     filter = true;
   }
-
-  bool checkDate(DateTime startTime, DateTime finishTime) =>
-      finishTime.difference(now).inDays >= 0 &&
-      now.difference(startTime).inDays >= 0;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +131,7 @@ class _MyHomeState extends State<MyHome> {
                             return buildItem(snapshot.data!
                                 .where((element) =>
                                     !filter ||
-                                    checkDate(element.date, element.date))
+                                    element.date.difference(now).inDays == 0)
                                 .toList());
                           }
 
@@ -147,7 +144,8 @@ class _MyHomeState extends State<MyHome> {
                     if (state is Success) {
                       return buildItem(state.list
                           .where((element) =>
-                              !filter || checkDate(element.date, element.date))
+                              !filter ||
+                              element.date.difference(now).inDays == 0)
                           .toList());
                     }
 

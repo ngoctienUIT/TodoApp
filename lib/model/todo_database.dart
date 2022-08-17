@@ -68,11 +68,10 @@ class TodoDatabase {
     UPDATE Todo 
     SET title = ?, content = ?, status = ?, date = ?, startTime = ?, finishTime = ?, color = ?, repeat = ?
     WHERE id = ?''', [
+      todo.title,
       todo.content,
       todo.status,
       DateFormat("dd/MM/yyyy").format(todo.date),
-      todo.startTime.toString(),
-      todo.finishTime.toString(),
       timeOfDateToString(todo.startTime),
       timeOfDateToString(todo.finishTime),
       todo.color.value,

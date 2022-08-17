@@ -64,3 +64,8 @@ TimeOfDay stringToTimeOfDate(String time) {
   int minute = int.parse(time.substring(3, 5));
   return TimeOfDay(hour: hour, minute: minute);
 }
+
+DateTime getDateNow() {
+  DateTime now = DateTime.now();
+  return DateTime(now.year, now.month, now.day);
+}

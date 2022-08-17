@@ -7,6 +7,7 @@ import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/file_list_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/pick_time_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/title_todo.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
 import 'package:uuid/uuid.dart';
@@ -67,102 +68,70 @@ class _NewTodoPageState extends State<NewTodoPage> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Padding(
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            titleTodo(
+              titleController: _titleController,
+              action: () {
+                Navigator.pop(context);
+              },
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextField(
-                        controller: _titleController,
+                        controller: _contentController,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           labelStyle: TextStyle(fontSize: 16),
                           hintStyle: TextStyle(fontSize: 16),
-                          hintText: 'Title',
+                          hintText: 'Enter new task',
                         ),
-                        maxLines: 1,
+                        maxLines: null,
                         keyboardType: TextInputType.multiline,
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color.fromRGBO(182, 190, 224, 0.5),
-                          ),
-                          borderRadius: BorderRadius.circular(90)),
-                      child: const Icon(Icons.close_rounded),
+                    if (todo.images.isNotEmpty) fileListWidget(todo.images),
+                    const SizedBox(height: 20),
+                    if (todo.files.isNotEmpty) imageListWidget(todo.files),
+                    const SizedBox(height: 20),
+                    PickTimeWidget(
+                      todo: todo,
+                      action: (todo) {
+                        setState(() {
+                          this.todo = todo;
+                        });
+                      },
                     ),
-                  ),
-                  const SizedBox(width: 30),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  controller: _contentController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    labelStyle: TextStyle(fontSize: 16),
-                    hintStyle: TextStyle(fontSize: 16),
-                    hintText: 'Enter new task',
-                  ),
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
+                    const SizedBox(height: 30),
+                    AddFileWidget(
+                      getImage: (list) => setState(() {
+                        List<String> images = [];
+                        images.addAll(todo.images);
+                        images.addAll(list);
+                        todo.images = images;
+                      }),
+                      getFile: (list) => setState(() {
+                        List<String> files = [];
+                        files.addAll(todo.files);
+                        files.addAll(list);
+                        todo.files = files;
+                      }),
+                      getColor: (color) => setState(() {
+                        todo.color = color;
+                      }),
+                    ),
+                    const SizedBox(height: 70),
+                  ],
                 ),
               ),
-              if (todo.images.isNotEmpty) fileListWidget(todo.images),
-              const SizedBox(height: 20),
-              if (todo.files.isNotEmpty) imageListWidget(todo.files),
-              const SizedBox(height: 20),
-              pickTimeWidget(
-                context,
-                dateTime: todo.date,
-                startTime: todo.startTime,
-                finishTime: todo.finishTime,
-                getDate: (date) => setState(() {
-                  todo.date = date;
-                }),
-                getStartTime: (time) => setState(() {
-                  todo.startTime = time;
-                }),
-                getFinishTime: (time) => setState(() {
-                  todo.finishTime = time;
-                }),
-                getID: (id) => setState(() {
-                  todo.repeat = id;
-                }),
-                id: todo.repeat,
-              ),
-              const SizedBox(height: 30),
-              AddFileWidget(
-                getImage: (list) => setState(() {
-                  todo.images.addAll(list);
-                }),
-                getFile: (list) => setState(() {
-                  todo.files.addAll(list);
-                }),
-                getColor: (color) {
-                  setState(() {
-                    todo.color = color;
-                  });
-                },
-              ),
-              const SizedBox(height: 50),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

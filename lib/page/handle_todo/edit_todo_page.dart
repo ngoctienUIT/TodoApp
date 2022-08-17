@@ -7,6 +7,7 @@ import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/pick_time_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/title_todo.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
 
@@ -19,12 +20,15 @@ class EditTodoPage extends StatefulWidget {
 }
 
 class _EditTodoPageState extends State<EditTodoPage> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+
+  final TextEditingController _titleController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _controller.text = widget.todo.content;
+    _contentController.text = widget.todo.content;
+    _titleController.text = widget.todo.title;
   }
 
   @override
@@ -32,7 +36,8 @@ class _EditTodoPageState extends State<EditTodoPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          widget.todo.content = _controller.text;
+          widget.todo.content = _contentController.text;
+          widget.todo.title = _titleController.text;
           await TodoDatabase().updateTodo(widget.todo);
           if (!mounted) return;
           BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
@@ -50,103 +55,90 @@ class _EditTodoPageState extends State<EditTodoPage> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      primary: Colors.black87,
-                      fixedSize: const Size(55, 55),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(90)),
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            titleTodo(
+              titleController: _titleController,
+              action: () {
+                Navigator.pop(context);
+              },
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: _contentController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          labelStyle: TextStyle(fontSize: 16),
+                          hintStyle: TextStyle(fontSize: 16),
+                          hintText: 'Enter new task',
+                        ),
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
                       ),
                     ),
-                    child: const Icon(Icons.close_rounded),
-                  ),
-                  const SizedBox(width: 30),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    labelStyle: TextStyle(fontSize: 16),
-                    hintStyle: TextStyle(fontSize: 16),
-                    hintText: 'Enter new task',
-                  ),
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
+                    FutureBuilder<List<DataSql>>(
+                      future: TodoDatabase().getImageData(widget.todo.id),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data!.isNotEmpty) {
+                            return imageListWidget(snapshot.data!
+                                .map((data) => data.link)
+                                .toList());
+                          }
+                        }
+                        return Container();
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    FutureBuilder<List<DataSql>>(
+                        future: TodoDatabase().getFileData(widget.todo.id),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return imageListWidget(snapshot.data!
+                                .map((data) => data.link)
+                                .toList());
+                          }
+                          return Container();
+                        }),
+                    const SizedBox(height: 20),
+                    PickTimeWidget(
+                      todo: widget.todo,
+                      action: (todo) {
+                        setState(() {
+                          widget.todo.repeat = todo.repeat;
+                          widget.todo.date = todo.date;
+                          widget.todo.finishTime = todo.finishTime;
+                          widget.todo.startTime = todo.startTime;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 30),
+                    AddFileWidget(
+                      getImage: (list) => setState(() {
+                        widget.todo.images.addAll(list);
+                      }),
+                      getFile: (list) => setState(() {
+                        widget.todo.files.addAll(list);
+                      }),
+                      getColor: (color) {
+                        setState(() {
+                          widget.todo.color = color;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 50)
+                  ],
                 ),
               ),
-              FutureBuilder<List<DataSql>>(
-                future: TodoDatabase().getImageData(widget.todo.id),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.isNotEmpty) {
-                      return imageListWidget(
-                          snapshot.data!.map((data) => data.link).toList());
-                    }
-                  }
-                  return Container();
-                },
-              ),
-              const SizedBox(height: 20),
-              FutureBuilder<List<DataSql>>(
-                  future: TodoDatabase().getFileData(widget.todo.id),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return imageListWidget(
-                          snapshot.data!.map((data) => data.link).toList());
-                    }
-                    return Container();
-                  }),
-              const SizedBox(height: 20),
-              pickTimeWidget(
-                context,
-                startTime: widget.todo.startTime,
-                finishTime: widget.todo.finishTime,
-                dateTime: widget.todo.date,
-                getDate: (date) => setState(() {
-                  widget.todo.date = date;
-                }),
-                getStartTime: (startTime) => setState(() {
-                  widget.todo.startTime = startTime;
-                }),
-                getFinishTime: (finishTime) => setState(() {
-                  widget.todo.finishTime = finishTime;
-                }),
-                getID: (id) => setState(() {
-                  widget.todo.repeat = id;
-                }),
-                id: widget.todo.repeat,
-              ),
-              const SizedBox(height: 30),
-              AddFileWidget(
-                getImage: (list) => setState(() {
-                  widget.todo.images.addAll(list);
-                }),
-                getFile: (list) => setState(() {
-                  widget.todo.files.addAll(list);
-                }),
-                getColor: (color) {
-                  setState(() {
-                    widget.todo.color = color;
-                  });
-                },
-              ),
-              const SizedBox(height: 50)
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
