@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/handle_todo/pick_function.dart';
@@ -91,7 +92,7 @@ class PickTimeWidget extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                   ),
-                  icon: const Icon(Icons.calendar_month_outlined),
+                  icon: const Icon(FontAwesomeIcons.clock),
                   label: Text(timeOfDateToString(todo.startTime)),
                 ),
               ],
@@ -124,7 +125,7 @@ class PickTimeWidget extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                   ),
-                  icon: const Icon(Icons.calendar_month_outlined),
+                  icon: const Icon(FontAwesomeIcons.clock),
                   label: Text(timeOfDateToString(todo.finishTime)),
                 ),
               ],

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -92,7 +90,7 @@ class _ItemTodoState extends State<ItemTodo> {
                       Row(
                         children: [
                           const Icon(FontAwesomeIcons.clock, size: 16),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 5),
                           Text(
                               "${timeOfDateToString(widget.todo.startTime)} - ${timeOfDateToString(widget.todo.finishTime)}")
                         ],

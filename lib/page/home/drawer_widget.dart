@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class DrawerWidget extends StatefulWidget {
-  const DrawerWidget({Key? key}) : super(key: key);
+  const DrawerWidget({Key? key, required this.action}) : super(key: key);
+  final Function(int) action;
 
   @override
   State<DrawerWidget> createState() => _DrawerWidgetState();
@@ -70,22 +71,36 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       label: const Text("Sign in Google")),
               const SizedBox(height: 20),
               drawerItem(
-                  icon: FontAwesomeIcons.house, title: "Home", action: () {}),
+                  icon: FontAwesomeIcons.house,
+                  title: "Home",
+                  action: () {
+                    widget.action(0);
+                  }),
               drawerItem(
                   icon: FontAwesomeIcons.bookmark,
                   title: "Template",
-                  action: () {}),
+                  action: () {
+                    widget.action(1);
+                  }),
               drawerItem(
                   icon: Icons.grid_view,
                   size: 25,
                   title: "Category",
-                  action: () {}),
+                  action: () {
+                    widget.action(2);
+                  }),
               drawerItem(
                   icon: FontAwesomeIcons.chartPie,
                   title: "Analytic",
-                  action: () {}),
+                  action: () {
+                    widget.action(3);
+                  }),
               drawerItem(
-                  icon: FontAwesomeIcons.gear, title: "Setting", action: () {}),
+                  icon: FontAwesomeIcons.gear,
+                  title: "Setting",
+                  action: () {
+                    widget.action(4);
+                  }),
               if (FirebaseAuth.instance.currentUser != null)
                 drawerItem(
                     icon: FontAwesomeIcons.arrowRightFromBracket,

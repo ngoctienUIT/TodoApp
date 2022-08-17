@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/page/home/drawer_widget.dart';
 import 'package:todo_app/page/home/my_home.dart';
+import 'package:todo_app/page/setting/setting_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class _HomePageState extends State<HomePage> {
   double yOffset = 0;
   double scale = 1;
   bool isOpenDraw = false;
+  int index = 0;
 
   void openDraw({required double x, required double y}) => setState(() {
         xOffset = x;
@@ -35,7 +37,12 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Stack(
           children: [
-            const DrawerWidget(),
+            DrawerWidget(
+              action: (index) => setState(() {
+                this.index = index;
+                closeDraw();
+              }),
+            ),
             WillPopScope(
               onWillPop: () async {
                 if (isOpenDraw) {
@@ -56,16 +63,9 @@ class _HomePageState extends State<HomePage> {
                   child: AbsorbPointer(
                     absorbing: isOpenDraw,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(isOpenDraw ? 20 : 0),
-                      child: MyHome(
-                        action: () {
-                          openDraw(
-                            x: MediaQuery.of(context).size.width * 0.5,
-                            y: MediaQuery.of(context).size.height * 0.1,
-                          );
-                        },
-                      ),
-                    ),
+                        borderRadius:
+                            BorderRadius.circular(isOpenDraw ? 20 : 0),
+                        child: getPage()),
                   ),
                 ),
               ),
@@ -74,5 +74,21 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void onOpen() => openDraw(
+        x: MediaQuery.of(context).size.width * 0.5,
+        y: MediaQuery.of(context).size.height * 0.1,
+      );
+
+  Widget getPage() {
+    switch (index) {
+      case 0:
+        return MyHome(action: onOpen);
+      case 4:
+        return SettingPage(action: onOpen);
+      default:
+        return MyHome(action: onOpen);
+    }
   }
 }
