@@ -1,7 +1,8 @@
 import 'dart:io' show Platform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
-// import 'package:timezone/timezone.dart' show TZDateTime;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotificationManager {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -25,6 +26,7 @@ class LocalNotificationManager {
   }
 
   void initiallizePlatform() {
+    tz.initializeTimeZones();
     var initSettingAndroid =
         const AndroidInitializationSettings('mipmap/ic_launcher');
     var initSetiingIOS = IOSInitializationSettings(
@@ -63,7 +65,7 @@ class LocalNotificationManager {
       String title = "",
       String body = "",
       String payload = "payload"}) async {
-    flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin.show(
         id,
         title,
         body,
@@ -76,8 +78,29 @@ class LocalNotificationManager {
         payload: payload);
   }
 
-  Future cancelNotification(int id) async {
-    flutterLocalNotificationsPlugin.cancel(id);
+  Future scheduledNotification(
+      {int id = 0,
+      String title = "",
+      String body = "",
+      String payload = "payload",
+      required Duration duration}) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.now(tz.local).add(duration),
+        const NotificationDetails(
+          android: AndroidNotificationDetails("channel id 1", "channel name 1",
+              playSound: true,
+              priority: Priority.high,
+              enableLights: true,
+              importance: Importance.max,
+              channelDescription: "channel description 1"),
+          iOS: IOSNotificationDetails(),
+        ),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true);
   }
 
   Future repeatNotification(
@@ -86,7 +109,7 @@ class LocalNotificationManager {
       String body = "",
       String payload = "payload",
       RepeatInterval repeat = RepeatInterval.everyMinute}) async {
-    flutterLocalNotificationsPlugin.periodicallyShow(
+    await flutterLocalNotificationsPlugin.periodicallyShow(
         id,
         title,
         body,
@@ -102,6 +125,14 @@ class LocalNotificationManager {
         ),
         payload: payload,
         androidAllowWhileIdle: true);
+  }
+
+  Future cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  Future cancelAllNotification() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
 

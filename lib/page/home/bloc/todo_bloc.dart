@@ -13,13 +13,13 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       LocalNotificationManager localNotificationManager =
           LocalNotificationManager.init();
       localNotificationManager.showNotification(
-          id: event.todo.id.hashCode + 1,
+          id: event.todo.id.hashCode,
           title: "Thêm thành công",
           body: event.todo.content);
 
       if (event.todo.repeat > 0) {
         localNotificationManager.repeatNotification(
-            id: event.todo.id.hashCode,
+            id: event.todo.id.hashCode - 1,
             title: "Thông báo",
             body: event.todo.content,
             repeat: getRepeatInterval(event.todo.repeat));

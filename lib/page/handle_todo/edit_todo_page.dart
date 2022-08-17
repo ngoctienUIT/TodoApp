@@ -5,6 +5,7 @@ import 'package:todo_app/model/data_sql.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
+import 'package:todo_app/page/handle_todo/widget/file_list_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/pick_time_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/title_todo.dart';
@@ -101,7 +102,7 @@ class _EditTodoPageState extends State<EditTodoPage> {
                         future: TodoDatabase().getFileData(widget.todo.id),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return imageListWidget(snapshot.data!
+                            return fileListWidget(snapshot.data!
                                 .map((data) => data.link)
                                 .toList());
                           }

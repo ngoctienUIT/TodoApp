@@ -12,7 +12,7 @@ class TodoDatabase {
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (database, version) async {
         database.execute(
-            "create table Todo (id text, title text, content text, repeat integer, date text, startTime text, finishTime text, status bool, color integer)");
+            "create table Todo (id text, title text, content text, remind integer, repeat integer, date text, startTime text, finishTime text, status bool, color integer)");
 
         database
             .execute("create table Image (id text, idTodo text, link text)");
@@ -66,7 +66,7 @@ class TodoDatabase {
     final db = await initializeDB();
     int updateCount = await db.rawUpdate('''
     UPDATE Todo 
-    SET title = ?, content = ?, status = ?, date = ?, startTime = ?, finishTime = ?, color = ?, repeat = ?
+    SET title = ?, content = ?, status = ?, date = ?, startTime = ?, finishTime = ?, color = ?, remind = ?, repeat = ?
     WHERE id = ?''', [
       todo.title,
       todo.content,
@@ -75,6 +75,7 @@ class TodoDatabase {
       timeOfDateToString(todo.startTime),
       timeOfDateToString(todo.finishTime),
       todo.color.value,
+      todo.remind,
       todo.repeat,
       todo.id
     ]);

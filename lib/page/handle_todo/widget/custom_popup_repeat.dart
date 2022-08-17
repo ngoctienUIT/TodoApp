@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-Widget customPopupMenu(Function(int) action, int index) {
+Widget customPopupRepeat(Function(int) action, int index) {
   List<String> repeatList = [
     "Không Lặp",
-    "Mỗi Phút",
-    "Mỗi Giờ",
     "Mỗi Ngày",
-    "Mỗi Tuần"
+    "Mỗi Tuần",
+    "Mỗi Tháng",
+    "Mỗi Năm"
   ];
   return PopupMenuButton(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -23,22 +23,22 @@ Widget customPopupMenu(Function(int) action, int index) {
           onTap: () {
             action(1);
           },
-          child: const Text("Mỗi Phút")),
+          child: const Text("Mỗi Ngày")),
       PopupMenuItem(
           onTap: () {
             action(2);
           },
-          child: const Text("Mỗi Giờ")),
+          child: const Text("Mỗi Tuần")),
       PopupMenuItem(
           onTap: () {
             action(3);
           },
-          child: const Text("Mỗi Ngày")),
+          child: const Text("Mỗi Tháng")),
       PopupMenuItem(
           onTap: () {
             action(4);
           },
-          child: const Text("Mỗi Tuần")),
+          child: const Text("Mỗi Năm")),
     ],
     child: Container(
       padding: const EdgeInsets.all(15),

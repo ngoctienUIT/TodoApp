@@ -96,9 +96,9 @@ class _NewTodoPageState extends State<NewTodoPage> {
                         keyboardType: TextInputType.multiline,
                       ),
                     ),
-                    if (todo.images.isNotEmpty) fileListWidget(todo.images),
+                    if (todo.images.isNotEmpty) imageListWidget(todo.images),
                     const SizedBox(height: 20),
-                    if (todo.files.isNotEmpty) imageListWidget(todo.files),
+                    if (todo.files.isNotEmpty) fileListWidget(todo.files),
                     const SizedBox(height: 20),
                     PickTimeWidget(
                       todo: todo,

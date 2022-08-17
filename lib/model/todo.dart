@@ -10,6 +10,7 @@ class Todo {
   TimeOfDay startTime;
   TimeOfDay finishTime;
   int repeat;
+  int remind;
   bool status;
   Color color;
   List<String> images;
@@ -24,6 +25,7 @@ class Todo {
       required this.finishTime,
       this.color = Colors.white,
       this.repeat = 0,
+      this.remind = 0,
       this.status = false,
       this.files = const [],
       this.images = const []});
@@ -33,6 +35,7 @@ class Todo {
         "title": title,
         "content": content,
         "repeat": repeat,
+        "remind": remind,
         "startTime": startTime,
         "finishTime": finishTime,
         "status": status,
@@ -46,6 +49,7 @@ class Todo {
         "title": title,
         "content": content,
         "repeat": repeat,
+        "remind": remind,
         "date": DateFormat("dd/MM/yyyy").format(date),
         "startTime": timeOfDateToString(startTime),
         "finishTime": timeOfDateToString(finishTime),
@@ -59,6 +63,7 @@ class Todo {
       title: data["title"],
       content: data["content"],
       repeat: data["repeat"],
+      remind: data["remind"],
       date: DateFormat("dd/MM/yyyy").parse(data["date"]),
       startTime: stringToTimeOfDate(data["startTime"]),
       finishTime: stringToTimeOfDate(data["finishTime"]),
