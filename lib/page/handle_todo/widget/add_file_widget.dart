@@ -28,7 +28,7 @@ class _AddFileWidgetState extends State<AddFileWidget> {
   void initState() {
     super.initState();
     isListening = false;
-    color = Colors.white;
+    color = Colors.red;
   }
 
   @override
@@ -134,7 +134,7 @@ class _AddFileWidgetState extends State<AddFileWidget> {
           Colors.teal,
           Colors.red,
           Colors.yellow,
-          Colors.white,
+          Colors.lightGreen
         ],
       );
 }

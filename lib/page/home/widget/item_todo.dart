@@ -38,7 +38,9 @@ class _ItemTodoState extends State<ItemTodo> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        color: widget.todo.color,
+        color: widget.todo.status
+            ? widget.todo.color.withOpacity(0.7)
+            : widget.todo.color,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           child: IntrinsicHeight(
@@ -52,16 +54,13 @@ class _ItemTodoState extends State<ItemTodo> {
                     width: 30,
                     height: 30,
                     decoration: BoxDecoration(
-                      color: widget.todo.status == true
-                          ? Colors.blue
-                          : Colors.white,
+                      color: widget.todo.status ? Colors.white54 : Colors.white,
                       borderRadius: BorderRadius.circular(90),
-                      border: Border.all(color: Colors.blue, width: 2),
                     ),
                     child: widget.todo.status == true
-                        ? const Icon(
+                        ? Icon(
                             FontAwesomeIcons.check,
-                            color: Colors.white,
+                            color: widget.todo.color,
                           )
                         : const SizedBox.shrink(),
                   ),
@@ -79,20 +78,37 @@ class _ItemTodoState extends State<ItemTodo> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: widget.todo.status
-                              ? Colors.black54
-                              : Colors.black,
+                              ? Colors.white54
+                              : Colors.white,
                           decoration: widget.todo.status
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
                         ),
                       ),
+                      Divider(
+                          color: widget.todo.status
+                              ? Colors.white54
+                              : Colors.white,
+                          thickness: 1),
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Icon(FontAwesomeIcons.clock, size: 16),
+                          Icon(
+                            FontAwesomeIcons.clock,
+                            size: 16,
+                            color: widget.todo.status
+                                ? Colors.white54
+                                : Colors.white,
+                          ),
                           const SizedBox(width: 5),
                           Text(
-                              "${timeOfDateToString(widget.todo.startTime)} - ${timeOfDateToString(widget.todo.finishTime)}")
+                            "${timeOfDateToString(widget.todo.startTime)} - ${timeOfDateToString(widget.todo.finishTime)}",
+                            style: TextStyle(
+                              color: widget.todo.status
+                                  ? Colors.white54
+                                  : Colors.white,
+                            ),
+                          )
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -103,8 +119,8 @@ class _ItemTodoState extends State<ItemTodo> {
                         style: TextStyle(
                           fontSize: 16,
                           color: widget.todo.status
-                              ? Colors.black54
-                              : Colors.black,
+                              ? Colors.white54
+                              : Colors.white,
                           decoration: widget.todo.status
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
@@ -114,14 +130,19 @@ class _ItemTodoState extends State<ItemTodo> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                const VerticalDivider(
+                VerticalDivider(
                   thickness: 1,
                   width: 20,
-                  color: Colors.black,
+                  color: widget.todo.status ? Colors.white54 : Colors.white,
                 ),
                 RotatedBox(
                   quarterTurns: -1,
-                  child: Text(widget.todo.status ? "FINISH" : "TODO"),
+                  child: Text(
+                    widget.todo.status ? "FINISH" : "TODO",
+                    style: TextStyle(
+                      color: widget.todo.status ? Colors.white54 : Colors.white,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 5)
               ],

@@ -84,7 +84,7 @@ class LocalNotificationManager {
       String body = "",
       String payload = "payload",
       required Duration duration}) async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    flutterLocalNotificationsPlugin.zonedSchedule(
         id,
         title,
         body,

@@ -23,7 +23,7 @@ class Todo {
       required this.date,
       required this.startTime,
       required this.finishTime,
-      this.color = Colors.white,
+      this.color = Colors.red,
       this.repeat = 0,
       this.remind = 0,
       this.status = false,

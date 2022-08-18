@@ -37,7 +37,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
         date: DateTime.now(),
         startTime: TimeOfDay.now(),
         finishTime: TimeOfDay.now(),
-        color: Colors.white);
+        color: Colors.red);
     _titleController.addListener(() {
       todo.title = _titleController.text;
     });

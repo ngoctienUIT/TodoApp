@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/handle_todo/pick_function.dart';
-import 'package:todo_app/page/handle_todo/widget/custom_popup_remind.dart';
-import 'package:todo_app/page/handle_todo/widget/custom_popup_repeat.dart';
+import 'package:todo_app/page/handle_todo/widget/custom_popup.dart';
 import 'package:todo_app/page/handle_todo/widget/pick_time_widget_item.dart';
 
 class PickTimeWidget extends StatelessWidget {
-  const PickTimeWidget({Key? key, required this.todo, required this.action})
+  PickTimeWidget({Key? key, required this.todo, required this.action})
       : super(key: key);
 
   final Function(Todo todo) action;
   final Todo todo;
+
+  final List<String> remindList = [
+    "Không Lặp",
+    "1 Phút",
+    "5 Phút",
+    "10 Phút",
+    "15 phút",
+    "30 phút",
+    "1 giờ"
+  ];
+
+  final List<String> repeatList = [
+    "Không Lặp",
+    "Mỗi Ngày",
+    "Mỗi Tuần",
+    "Mỗi Tháng",
+    "Mỗi Năm"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -77,15 +95,15 @@ class PickTimeWidget extends StatelessWidget {
         Row(
           children: [
             const Spacer(),
-            customPopupRemind((id) {
+            customPopup(context, list: remindList, action: (id) {
               todo.remind = id;
               action(todo);
-            }, todo.remind),
+            }, index: todo.remind),
             const Spacer(),
-            customPopupRepeat((id) {
+            customPopup(context, list: repeatList, action: (id) {
               todo.repeat = id;
               action(todo);
-            }, todo.repeat),
+            }, index: todo.repeat, icon: FontAwesomeIcons.repeat),
             const Spacer(),
           ],
         ),

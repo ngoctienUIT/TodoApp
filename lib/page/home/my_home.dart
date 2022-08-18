@@ -45,6 +45,7 @@ class _MyHomeState extends State<MyHome> {
             highlightColor: Colors.transparent,
             onPressed: () {
               setState(() {
+                if (filter) now = getDateNow();
                 filter = !filter;
               });
             },
