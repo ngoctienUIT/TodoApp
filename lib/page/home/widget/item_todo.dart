@@ -228,10 +228,9 @@ class _ItemTodoState extends State<ItemTodo> {
                 const SizedBox(height: 15),
                 customButton(
                     color: Colors.red,
-                    action: () async {
-                      await TodoDatabase().deleteTodo(widget.todo.id);
-                      if (!mounted) return;
-                      BlocProvider.of<TodoBloc>(context).add(DeleteEvent());
+                    action: () {
+                      BlocProvider.of<TodoBloc>(context)
+                          .add(DeleteEvent(todo: widget.todo));
                       Navigator.pop(context);
                     },
                     text: "Delete"),

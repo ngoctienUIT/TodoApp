@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:todo_app/model/data_sql.dart';
 import 'package:todo_app/model/local_notification_manager.dart';
 import 'package:todo_app/model/todo.dart';
@@ -13,10 +14,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<AddEvent>((event, emit) async {
       LocalNotificationManager localNotificationManager =
           LocalNotificationManager.init();
-      localNotificationManager.showNotification(
-          id: event.todo.id.hashCode,
-          title: event.todo.title,
-          body: event.todo.content);
 
       if (event.todo.repeat > 0) {
         localNotificationManager.repeatNotification(
@@ -41,6 +38,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       emit(Success(list: await todoDatabase.getData()));
     });
     on<DeleteEvent>((event, emit) async {
+      removeScheduledNotification(event.todo);
+      await TodoDatabase().deleteTodo(event.todo.id);
       emit(Success(list: await TodoDatabase().getData()));
     });
     on<UpdateEvent>((event, emit) async {
@@ -65,23 +64,27 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
   }
 
-  void scheduledNotification(Todo todo) {
+  void removeScheduledNotification(Todo todo) {
     if (todo.remind > 0) {
-      DateTime dateTimeStart = todo.date.add(
-        Duration(
-          hours: todo.startTime.hour,
-          minutes: todo.startTime.minute,
-        ),
-      );
-
-      DateTime dateTimeFinish = todo.date.add(
-        Duration(
-          hours: todo.finishTime.hour,
-          minutes: todo.finishTime.minute,
-        ),
-      );
+      DateTime dateTimeStart = addTime(todo.date, todo.startTime);
+      DateTime dateTimeFinish = addTime(todo.date, todo.finishTime);
       int count = 0;
 
+      do {
+        count++;
+        LocalNotificationManager localNotificationManager =
+            LocalNotificationManager.init();
+        localNotificationManager.cancelNotification(todo.id.hashCode + count);
+        dateTimeStart = dateTimeStart.add(getDuration(todo.remind));
+      } while (dateTimeStart.difference(dateTimeFinish).inMinutes < 0);
+    }
+  }
+
+  void scheduledNotification(Todo todo) {
+    DateTime dateTimeStart = addTime(todo.date, todo.startTime);
+    DateTime dateTimeFinish = addTime(todo.date, todo.finishTime);
+    if (todo.remind > 0) {
+      int count = 0;
       do {
         count++;
         LocalNotificationManager localNotificationManager =
@@ -94,6 +97,22 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         );
         dateTimeStart = dateTimeStart.add(getDuration(todo.remind));
       } while (dateTimeStart.difference(dateTimeFinish).inMinutes < 0);
+    } else {
+      LocalNotificationManager localNotificationManager =
+          LocalNotificationManager.init();
+      localNotificationManager.scheduledNotification(
+        id: todo.id.hashCode + 1,
+        title: todo.title,
+        body: todo.content,
+        duration: dateTimeStart.difference(DateTime.now()),
+      );
     }
   }
+
+  DateTime addTime(DateTime date, TimeOfDay time) => date.add(
+        Duration(
+          hours: time.hour,
+          minutes: time.minute,
+        ),
+      );
 }

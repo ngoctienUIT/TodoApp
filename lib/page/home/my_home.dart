@@ -115,11 +115,9 @@ class _MyHomeState extends State<MyHome> {
                   initialSelectedDate: DateTime.now(),
                   selectionColor: Colors.black,
                   selectedTextColor: Colors.white,
-                  onDateChange: (date) {
-                    setState(() {
-                      now = date;
-                    });
-                  },
+                  onDateChange: (date) => setState(() {
+                    now = date;
+                  }),
                 ),
               Expanded(
                 child: BlocBuilder<TodoBloc, TodoState>(
@@ -130,9 +128,7 @@ class _MyHomeState extends State<MyHome> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return buildItem(snapshot.data!
-                                .where((element) =>
-                                    !filter ||
-                                    element.date.difference(now).inDays == 0)
+                                .where((element) => checkItem(element))
                                 .toList());
                           }
 
@@ -144,9 +140,7 @@ class _MyHomeState extends State<MyHome> {
 
                     if (state is Success) {
                       return buildItem(state.list
-                          .where((element) =>
-                              !filter ||
-                              element.date.difference(now).inDays == 0)
+                          .where((element) => checkItem(element))
                           .toList());
                     }
 
@@ -159,5 +153,16 @@ class _MyHomeState extends State<MyHome> {
         ),
       ),
     );
+  }
+
+  bool checkItem(Todo todo) {
+    return !filter ||
+        todo.repeat == 1 ||
+        (todo.repeat == 2 && now.difference(todo.date).inDays % 7 == 0) ||
+        (todo.repeat == 3 && now.day == todo.date.day) ||
+        (todo.repeat == 4 &&
+            now.day == todo.date.day &&
+            now.month == todo.date.month) ||
+        todo.date.difference(now).inDays == 0;
   }
 }

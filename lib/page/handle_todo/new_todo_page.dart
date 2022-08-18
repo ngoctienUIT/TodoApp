@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/handle_todo/widget/add_file_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/file_list_widget.dart';
 import 'package:todo_app/page/handle_todo/widget/image_list_widget.dart';
@@ -34,7 +35,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
         id: const Uuid().v1(),
         title: "",
         content: "",
-        date: DateTime.now(),
+        date: getDateNow(),
         startTime: TimeOfDay.now(),
         finishTime: TimeOfDay.now(),
         color: Colors.red);

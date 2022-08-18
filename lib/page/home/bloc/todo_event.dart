@@ -7,6 +7,9 @@ class AddEvent extends TodoEvent {
   AddEvent({required this.todo});
 }
 
-class DeleteEvent extends TodoEvent {}
+class DeleteEvent extends TodoEvent {
+  final Todo todo;
+  DeleteEvent({required this.todo});
+}
 
 class UpdateEvent extends TodoEvent {}
