@@ -52,9 +52,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          BlocProvider.of<TodoBloc>(context).add(
-            AddEvent(todo: todo),
-          );
+          BlocProvider.of<TodoBloc>(context).add(AddEvent(todo: todo));
           Navigator.pop(context);
         },
         label: Row(

@@ -11,8 +11,12 @@ class TodoDatabase {
     return openDatabase(
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (database, version) async {
-        database.execute(
-            "create table Todo (id text, title text, content text, remind integer, repeat integer, date text, startTime text, finishTime text, status bool, color integer)");
+        database.execute('''create table Todo (
+              id text, code integer, 
+              title text, content text, 
+              remind integer, repeat integer, 
+              date text, startTime text, finishTime text, 
+              status bool, color integer)''');
 
         database
             .execute("create table Image (id text, idTodo text, link text)");

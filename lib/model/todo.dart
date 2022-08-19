@@ -4,6 +4,7 @@ import 'package:todo_app/page/handle_todo/pick_function.dart';
 
 class Todo {
   String id;
+  int code;
   String title;
   String content;
   DateTime date;
@@ -18,6 +19,7 @@ class Todo {
 
   Todo(
       {required this.id,
+      this.code = 0,
       required this.title,
       required this.content,
       required this.date,
@@ -28,7 +30,9 @@ class Todo {
       this.remind = 0,
       this.status = false,
       this.files = const [],
-      this.images = const []});
+      this.images = const []}) {
+    code = id.hashCode;
+  }
 
   Map<String, dynamic> toMap() => {
         "id": id,
@@ -46,6 +50,7 @@ class Todo {
 
   Map<String, dynamic> toMapSQL() => {
         "id": id,
+        "code": code,
         "title": title,
         "content": content,
         "repeat": repeat,
@@ -60,6 +65,7 @@ class Todo {
   factory Todo.fromMapSQL(Map<String, dynamic> data) {
     return Todo(
       id: data["id"],
+      code: data["code"],
       title: data["title"],
       content: data["content"],
       repeat: data["repeat"],

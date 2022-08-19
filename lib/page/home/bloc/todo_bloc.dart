@@ -17,7 +17,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       if (event.todo.repeat > 0) {
         localNotificationManager.repeatNotification(
-            id: event.todo.id.hashCode - 1,
+            id: event.todo.code - 1,
             title: event.todo.title,
             body: event.todo.content,
             repeat: getRepeatInterval(event.todo.repeat));
@@ -37,13 +37,30 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
       emit(Success(list: await todoDatabase.getData()));
     });
+
     on<DeleteEvent>((event, emit) async {
       removeScheduledNotification(event.todo);
       await TodoDatabase().deleteTodo(event.todo.id);
       emit(Success(list: await TodoDatabase().getData()));
     });
+
     on<UpdateEvent>((event, emit) async {
       emit(Success(list: await TodoDatabase().getData()));
+    });
+
+    on<CompleteEvent>((event, emit) async {
+      removeScheduledNotification(event.todo);
+      if (event.todo.status) {
+        LocalNotificationManager localNotificationManager =
+            LocalNotificationManager.init();
+        localNotificationManager.cancelNotification(event.todo.code);
+        localNotificationManager.showNotification(
+            id: event.todo.code - 1,
+            title: "Hoàn thành",
+            body: event.todo.title);
+      } else {
+        scheduledNotification(event.todo);
+      }
     });
   }
 
@@ -74,7 +91,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         count++;
         LocalNotificationManager localNotificationManager =
             LocalNotificationManager.init();
-        localNotificationManager.cancelNotification(todo.id.hashCode + count);
+        localNotificationManager.cancelNotification(todo.code + count);
         dateTimeStart = dateTimeStart.add(getDuration(todo.remind));
       } while (dateTimeStart.difference(dateTimeFinish).inMinutes < 0);
     }
@@ -89,19 +106,22 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         count++;
         LocalNotificationManager localNotificationManager =
             LocalNotificationManager.init();
-        localNotificationManager.scheduledNotification(
-          id: todo.id.hashCode + count,
-          title: todo.title,
-          body: todo.content,
-          duration: dateTimeStart.difference(DateTime.now()),
-        );
+        if (dateTimeStart.difference(DateTime.now()).inMinutes > 0) {
+          localNotificationManager.scheduledNotification(
+            id: todo.code + count,
+            title: todo.title,
+            body: todo.content,
+            duration: dateTimeStart.difference(DateTime.now()),
+          );
+        }
         dateTimeStart = dateTimeStart.add(getDuration(todo.remind));
       } while (dateTimeStart.difference(dateTimeFinish).inMinutes < 0);
-    } else {
+    } else if (todo.remind == 0 &&
+        dateTimeStart.difference(DateTime.now()).inMinutes > 0) {
       LocalNotificationManager localNotificationManager =
           LocalNotificationManager.init();
       localNotificationManager.scheduledNotification(
-        id: todo.id.hashCode + 1,
+        id: todo.code + 1,
         title: todo.title,
         body: todo.content,
         duration: dateTimeStart.difference(DateTime.now()),

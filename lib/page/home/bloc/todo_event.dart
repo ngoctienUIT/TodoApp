@@ -13,3 +13,8 @@ class DeleteEvent extends TodoEvent {
 }
 
 class UpdateEvent extends TodoEvent {}
+
+class CompleteEvent extends TodoEvent {
+  final Todo todo;
+  CompleteEvent({required this.todo});
+}

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:todo_app/model/local_notification_manager.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/edit_todo_page.dart';
@@ -49,6 +48,8 @@ class _ItemTodoState extends State<ItemTodo> {
                 InkWell(
                   onTap: () {
                     finsishTask();
+                    BlocProvider.of<TodoBloc>(context)
+                        .add(CompleteEvent(todo: widget.todo));
                   },
                   child: Container(
                     width: 30,
@@ -107,6 +108,9 @@ class _ItemTodoState extends State<ItemTodo> {
                               color: widget.todo.status
                                   ? Colors.white54
                                   : Colors.white,
+                              decoration: widget.todo.status
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
                             ),
                           )
                         ],
@@ -156,21 +160,13 @@ class _ItemTodoState extends State<ItemTodo> {
   void finsishTask() => setState(() {
         widget.todo.status = !widget.todo.status;
         TodoDatabase().updateTodo(widget.todo);
-
-        LocalNotificationManager localNotificationManager =
-            LocalNotificationManager.init();
-        localNotificationManager.cancelNotification(widget.todo.id.hashCode);
-        localNotificationManager.showNotification(
-            id: widget.todo.id.hashCode - 1,
-            title: "Hoàn thành",
-            body: widget.todo.content);
       });
 
   void modalBottomSheetMenu() {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(20),
         ),
         builder: (builder) {
           return Container(
@@ -178,8 +174,8 @@ class _ItemTodoState extends State<ItemTodo> {
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
             child: Column(
@@ -199,8 +195,10 @@ class _ItemTodoState extends State<ItemTodo> {
                     action: () {
                       Navigator.pop(context);
                       finsishTask();
+                      BlocProvider.of<TodoBloc>(context)
+                          .add(CompleteEvent(todo: widget.todo));
                     },
-                    text: "Finish"),
+                    text: widget.todo.status ? "Todo" : "Finish"),
                 const SizedBox(height: 15),
                 customButton(
                     color: const Color.fromRGBO(184, 207, 72, 1),
