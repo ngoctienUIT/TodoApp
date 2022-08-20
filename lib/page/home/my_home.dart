@@ -127,9 +127,11 @@ class _MyHomeState extends State<MyHome> {
                         future: TodoDatabase().getData(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return buildItem(snapshot.data!
-                                .where((element) => checkItem(element))
-                                .toList());
+                            return buildItem(
+                                snapshot.data!
+                                    .where((element) => checkItem(element))
+                                    .toList(),
+                                filter);
                           }
 
                           return const Center(
@@ -139,9 +141,11 @@ class _MyHomeState extends State<MyHome> {
                     }
 
                     if (state is Success) {
-                      return buildItem(state.list
-                          .where((element) => checkItem(element))
-                          .toList());
+                      return buildItem(
+                          state.list
+                              .where((element) => checkItem(element))
+                              .toList(),
+                          filter);
                     }
 
                     return const Center(child: Text("Không có dữ liệu"));

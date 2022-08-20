@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
@@ -11,8 +12,10 @@ import 'package:todo_app/page/home/bloc/todo_event.dart';
 import 'package:todo_app/page/home/widget/custom_button.dart';
 
 class ItemTodo extends StatefulWidget {
-  const ItemTodo({Key? key, required this.todo}) : super(key: key);
+  const ItemTodo({Key? key, required this.todo, required this.filter})
+      : super(key: key);
   final Todo todo;
+  final bool filter;
 
   @override
   State<ItemTodo> createState() => _ItemTodoState();
@@ -92,6 +95,36 @@ class _ItemTodoState extends State<ItemTodo> {
                               : Colors.white,
                           thickness: 1),
                       const SizedBox(height: 10),
+                      if (!widget.filter)
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.calendarDays,
+                                  size: 16,
+                                  color: widget.todo.status
+                                      ? Colors.white54
+                                      : Colors.white,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  DateFormat("dd/MM/yyyy")
+                                      .format(widget.todo.date),
+                                  style: TextStyle(
+                                    color: widget.todo.status
+                                        ? Colors.white54
+                                        : Colors.white,
+                                    decoration: widget.todo.status
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 10)
+                          ],
+                        ),
                       Row(
                         children: [
                           Icon(

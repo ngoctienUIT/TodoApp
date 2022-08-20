@@ -47,7 +47,8 @@ class TodoDatabase {
 
   Future<List<Todo>> getData() async {
     final Database db = await initializeDB();
-    final List<Map<String, dynamic>> queryResult = await db.query("Todo");
+    final List<Map<String, dynamic>> queryResult =
+        await db.query("Todo", orderBy: "date, startTime");
     // db.close();
     return queryResult.map((todo) => Todo.fromMapSQL(todo)).toList();
   }

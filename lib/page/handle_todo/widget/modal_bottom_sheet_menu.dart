@@ -6,6 +6,7 @@ void modalBottomSheetMenu(BuildContext context,
     int index = 0}) {
   FixedExtentScrollController mainController =
       FixedExtentScrollController(initialItem: index);
+  int position = mainController.initialItem;
   showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -19,24 +20,32 @@ void modalBottomSheetMenu(BuildContext context,
               topRight: Radius.circular(20),
             ),
           ),
-          child: ListWheelScrollView(
-            itemExtent: 50,
-            perspective: 0.005,
-            diameterRatio: 1.2,
-            controller: mainController,
-            physics: const FixedExtentScrollPhysics(),
-            onSelectedItemChanged: (value) {
-              action(value);
-            },
-            children: List.generate(
-              list.length,
-              (index) => Text(
-                list[index],
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          child: StatefulBuilder(builder: (context, setState) {
+            return ListWheelScrollView(
+              itemExtent: 50,
+              perspective: 0.005,
+              diameterRatio: 1.2,
+              controller: mainController,
+              physics: const FixedExtentScrollPhysics(),
+              onSelectedItemChanged: (value) {
+                action(value);
+                setState(() {
+                  position = value;
+                });
+              },
+              children: List.generate(
+                list.length,
+                (index) => Text(
+                  list[index],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: index == position ? Colors.red : Colors.black,
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         );
       });
 }

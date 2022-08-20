@@ -58,6 +58,7 @@ dependencies:
   date_picker_timeline: ^1.2.3
   flutter_colorpicker: ^1.0.3
   timezone: ^0.8.0
+  fl_chart: ^0.55.1
 
 dev_dependencies:
   flutter_test:

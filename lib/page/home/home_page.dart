@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/analytic/analytic_page.dart';
+import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/home/drawer_widget.dart';
 import 'package:todo_app/page/home/my_home.dart';
 import 'package:todo_app/page/setting/setting_page.dart';
@@ -85,6 +88,15 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 0:
         return MyHome(action: onOpen);
+      case 3:
+        return FutureBuilder<List<Todo>>(
+            future: TodoDatabase().getData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return AnalyticPage(action: onOpen, todoList: snapshot.data);
+              }
+              return AnalyticPage(action: onOpen, todoList: null);
+            });
       case 4:
         return SettingPage(action: onOpen);
       default:
