@@ -22,11 +22,13 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   late DateTime now;
   late bool filter;
+  late DateTime backDate;
 
   @override
   void initState() {
     super.initState();
     now = getDateNow();
+    backDate = getDateNow();
     filter = true;
   }
 
@@ -110,14 +112,28 @@ class _MyHomeState extends State<MyHome> {
               ),
               const SizedBox(height: 20),
               if (filter)
-                DatePicker(
-                  DateTime.now(),
-                  initialSelectedDate: DateTime.now(),
-                  selectionColor: Colors.black,
-                  selectedTextColor: Colors.white,
-                  onDateChange: (date) => setState(() {
-                    now = date;
-                  }),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          backDate = backDate.subtract(const Duration(days: 1));
+                        });
+                      },
+                      child: const Icon(Icons.arrow_back_ios_new_rounded),
+                    ),
+                    Expanded(
+                      child: DatePicker(
+                        backDate,
+                        initialSelectedDate: now,
+                        selectionColor: Colors.black,
+                        selectedTextColor: Colors.white,
+                        onDateChange: (date) => setState(() {
+                          now = date;
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
               Expanded(
                 child: BlocBuilder<TodoBloc, TodoState>(
