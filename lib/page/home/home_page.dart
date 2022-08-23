@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/about/about_page.dart';
+import 'package:todo_app/ads/ads_page.dart';
 import 'package:todo_app/analytic/analytic_page.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
@@ -88,7 +90,7 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 0:
         return MyHome(action: onOpen);
-      case 3:
+      case 1:
         return FutureBuilder<List<Todo>>(
             future: TodoDatabase().getData(),
             builder: (context, snapshot) {
@@ -97,10 +99,13 @@ class _HomePageState extends State<HomePage> {
               }
               return AnalyticPage(action: onOpen, todoList: null);
             });
-      case 4:
+
+      case 2:
+        return AdsPage(action: onOpen);
+      case 3:
         return SettingPage(action: onOpen);
       default:
-        return MyHome(action: onOpen);
+        return AboutPage(action: onOpen);
     }
   }
 }

@@ -59,10 +59,19 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   timezone: ^0.8.0
   fl_chart: ^0.55.1
+  google_mobile_ads: ^2.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_lints: ^2.0.0
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  
   flutter_launcher_icons: ^0.10.0
   
 flutter_icons:
@@ -77,13 +86,6 @@ flutter_icons:
   windows:
     generate: true
     image_path: "assets/images/logo.png"
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

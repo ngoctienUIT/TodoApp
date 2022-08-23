@@ -70,46 +70,58 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       icon: const Icon(FontAwesomeIcons.google),
                       label: const Text("Sign in Google")),
               const SizedBox(height: 20),
-              drawerItem(
-                  icon: FontAwesomeIcons.house,
-                  title: "Home",
-                  action: () {
-                    widget.action(0);
-                  }),
-              drawerItem(
-                  icon: FontAwesomeIcons.bookmark,
-                  title: "Template",
-                  action: () {
-                    widget.action(1);
-                  }),
-              drawerItem(
-                  icon: Icons.grid_view,
-                  size: 25,
-                  title: "Category",
-                  action: () {
-                    widget.action(2);
-                  }),
-              drawerItem(
-                  icon: FontAwesomeIcons.chartPie,
-                  title: "Analytic",
-                  action: () {
-                    widget.action(3);
-                  }),
-              drawerItem(
-                  icon: FontAwesomeIcons.gear,
-                  title: "Setting",
-                  action: () {
-                    widget.action(4);
-                  }),
-              if (FirebaseAuth.instance.currentUser != null)
-                drawerItem(
-                    icon: FontAwesomeIcons.arrowRightFromBracket,
-                    title: "Log Out",
-                    action: () async {
-                      await FirebaseAuth.instance.signOut();
-                      await GoogleSignIn().signOut();
-                      setState(() {});
-                    }),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  drawerItem(
+                      icon: FontAwesomeIcons.house,
+                      title: "Home",
+                      action: () {
+                        widget.action(0);
+                      }),
+                  drawerItem(
+                      icon: FontAwesomeIcons.chartPie,
+                      title: "Analytic",
+                      action: () {
+                        widget.action(1);
+                      }),
+                  drawerItem(
+                      icon: FontAwesomeIcons.rectangleAd,
+                      size: 25,
+                      title: "Ads",
+                      action: () {
+                        widget.action(2);
+                      }),
+                  drawerItem(
+                      icon: FontAwesomeIcons.gear,
+                      title: "Setting",
+                      action: () {
+                        widget.action(3);
+                      }),
+                  drawerItem(
+                      icon: Icons.info_outline_rounded,
+                      size: 25,
+                      title: "About",
+                      action: () {
+                        widget.action(4);
+                      }),
+                  if (FirebaseAuth.instance.currentUser != null)
+                    drawerItem(
+                        icon: FontAwesomeIcons.arrowRightFromBracket,
+                        title: "Log Out",
+                        action: () async {
+                          await FirebaseAuth.instance.signOut();
+                          await GoogleSignIn().signOut();
+                          setState(() {});
+                        }),
+                ],
+              ),
+              const Spacer(),
+              const Text(
+                "v0.1.1 Beta",
+                style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 20)
             ],
           ),
         ),
@@ -126,8 +138,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       onTap: () {
         action();
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+      splashColor: Colors.transparent,
+      child: Container(
+        width: 150,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         child: Row(
           children: [
             Icon(

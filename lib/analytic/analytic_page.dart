@@ -33,7 +33,9 @@ class _AnalyticPageState extends State<AnalyticPage> {
         backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
         title: const Text(
           "Analytic",
-          style: TextStyle(color: Color.fromRGBO(156, 166, 201, 1)),
+          style: TextStyle(
+              color: Color.fromRGBO(156, 166, 201, 1),
+              fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         leading: IconButton(
