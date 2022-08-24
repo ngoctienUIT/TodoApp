@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -68,47 +69,47 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         setState(() {});
                       },
                       icon: const Icon(FontAwesomeIcons.google),
-                      label: const Text("Sign in Google")),
+                      label: Text("signInWithGoogle".tr)),
               const SizedBox(height: 20),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   drawerItem(
                       icon: FontAwesomeIcons.house,
-                      title: "Home",
+                      title: "home".tr,
                       action: () {
                         widget.action(0);
                       }),
                   drawerItem(
                       icon: FontAwesomeIcons.chartPie,
-                      title: "Analytic",
+                      title: "analytic".tr,
                       action: () {
                         widget.action(1);
                       }),
                   drawerItem(
                       icon: FontAwesomeIcons.rectangleAd,
                       size: 25,
-                      title: "Ads",
+                      title: "ads".tr,
                       action: () {
                         widget.action(2);
                       }),
                   drawerItem(
                       icon: FontAwesomeIcons.gear,
-                      title: "Setting",
+                      title: "setting".tr,
                       action: () {
                         widget.action(3);
                       }),
                   drawerItem(
                       icon: Icons.info_outline_rounded,
                       size: 25,
-                      title: "About",
+                      title: "about".tr,
                       action: () {
                         widget.action(4);
                       }),
                   if (FirebaseAuth.instance.currentUser != null)
                     drawerItem(
                         icon: FontAwesomeIcons.arrowRightFromBracket,
-                        title: "Log Out",
+                        title: "logout".tr,
                         action: () async {
                           await FirebaseAuth.instance.signOut();
                           await GoogleSignIn().signOut();
@@ -140,7 +141,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       },
       splashColor: Colors.transparent,
       child: Container(
-        width: 150,
+        width: 200,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         child: Row(
           children: [

@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_app/analytic/widget/line_chart_my_data.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/analytic/widget/line_chart_my_data.dart';
 
 class MyLineChart extends StatelessWidget {
   const MyLineChart(

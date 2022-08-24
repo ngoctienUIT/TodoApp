@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:todo_app/analytic/widget/analytic_button.dart';
-import 'package:todo_app/analytic/widget/column_chart.dart';
-import 'package:todo_app/analytic/widget/line_chart_page.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/analytic/widget/analytic_button.dart';
+import 'package:todo_app/page/analytic/widget/column_chart.dart';
+import 'package:todo_app/page/analytic/widget/line_chart_page.dart';
 import 'package:todo_app/page/handle_todo/pick_function.dart';
 
 class AnalyticPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class AnalyticPage extends StatefulWidget {
 }
 
 class _AnalyticPageState extends State<AnalyticPage> {
-  final List<String> select = ["Column", "Line"];
+  final List<String> select = ["column".tr, "Line".tr];
   int index = 0;
   DateTime date = getDateNow();
 

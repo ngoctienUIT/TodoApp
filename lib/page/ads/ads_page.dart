@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:todo_app/model/google_ads_manager.dart';
 
@@ -60,9 +61,9 @@ class _AdsPageState extends State<AdsPage> {
         iconTheme: const IconThemeData(
             color: Color.fromRGBO(159, 161, 184, 1), size: 25),
         backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
-        title: const Text(
-          "Google Ads",
-          style: TextStyle(
+        title: Text(
+          "ads".tr,
+          style: const TextStyle(
               color: Color.fromRGBO(156, 166, 201, 1),
               fontWeight: FontWeight.bold),
         ),

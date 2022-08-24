@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/about/about_page.dart';
-import 'package:todo_app/ads/ads_page.dart';
-import 'package:todo_app/analytic/analytic_page.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
+import 'package:todo_app/page/about/about_page.dart';
+import 'package:todo_app/page/ads/ads_page.dart';
+import 'package:todo_app/page/analytic/analytic_page.dart';
 import 'package:todo_app/page/home/drawer_widget.dart';
 import 'package:todo_app/page/home/my_home.dart';
 import 'package:todo_app/page/setting/setting_page.dart';

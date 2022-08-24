@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key, required this.action}) : super(key: key);
@@ -14,9 +15,9 @@ class AboutPage extends StatelessWidget {
         iconTheme: const IconThemeData(
             color: Color.fromRGBO(159, 161, 184, 1), size: 25),
         backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
-        title: const Text(
-          "About",
-          style: TextStyle(
+        title: Text(
+          "about".tr,
+          style: const TextStyle(
               color: Color.fromRGBO(156, 166, 201, 1),
               fontWeight: FontWeight.bold),
         ),

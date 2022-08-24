@@ -2,6 +2,7 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
@@ -106,9 +107,9 @@ class _MyHomeState extends State<MyHome> {
                 ),
               ),
               const SizedBox(height: 5),
-              const Text(
-                "Today",
-                style: TextStyle(fontSize: 20),
+              Text(
+                "today".tr,
+                style: const TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 20),
               if (filter)

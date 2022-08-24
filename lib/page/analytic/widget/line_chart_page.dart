@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/analytic/widget/my_line_chart.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/page/analytic/widget/my_line_chart.dart';
 
 class LineChartPage extends StatefulWidget {
   const LineChartPage({Key? key, required this.date, required this.todoList})

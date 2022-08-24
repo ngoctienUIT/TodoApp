@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:todo_app/model/todo.dart';
@@ -50,7 +51,7 @@ class _ItemTodoState extends State<ItemTodo> {
               children: [
                 InkWell(
                   onTap: () {
-                    finsishTask();
+                    finishTask();
                     BlocProvider.of<TodoBloc>(context)
                         .add(CompleteEvent(todo: widget.todo));
                   },
@@ -190,7 +191,7 @@ class _ItemTodoState extends State<ItemTodo> {
     );
   }
 
-  void finsishTask() => setState(() {
+  void finishTask() => setState(() {
         widget.todo.status = !widget.todo.status;
         TodoDatabase().updateTodo(widget.todo);
       });
@@ -227,7 +228,7 @@ class _ItemTodoState extends State<ItemTodo> {
                     color: const Color.fromRGBO(60, 66, 194, 1),
                     action: () {
                       Navigator.pop(context);
-                      finsishTask();
+                      finishTask();
                       BlocProvider.of<TodoBloc>(context)
                           .add(CompleteEvent(todo: widget.todo));
                     },
@@ -245,7 +246,7 @@ class _ItemTodoState extends State<ItemTodo> {
                         ),
                       );
                     },
-                    text: "Edit"),
+                    text: "edit".tr),
                 const SizedBox(height: 15),
                 customButton(
                     color: const Color.fromRGBO(57, 126, 116, 1),
@@ -255,7 +256,7 @@ class _ItemTodoState extends State<ItemTodo> {
 
                       Navigator.pop(context);
                     },
-                    text: "Share"),
+                    text: "share".tr),
                 const SizedBox(height: 15),
                 customButton(
                     color: Colors.red,
@@ -264,7 +265,7 @@ class _ItemTodoState extends State<ItemTodo> {
                           .add(DeleteEvent(todo: widget.todo));
                       Navigator.pop(context);
                     },
-                    text: "Delete"),
+                    text: "delete".tr),
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
@@ -275,17 +276,17 @@ class _ItemTodoState extends State<ItemTodo> {
                           MaterialStateProperty.all<Color>(Colors.white),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side:
-                                const BorderSide(color: Colors.red, width: 2)),
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: Colors.red, width: 2),
+                        ),
                       ),
                     ),
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
-                      "Close",
-                      style: TextStyle(
+                    child: Text(
+                      "close".tr,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
