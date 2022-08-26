@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/home_page.dart';
@@ -14,14 +15,21 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  int locale = 0;
+  await SharedPreferences.getInstance()
+      .then((preferences) => locale = preferences.getInt("language") ?? 0);
+  runApp(MyApp(locale: locale));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.locale}) : super(key: key);
+  final int locale;
 
   @override
   Widget build(BuildContext context) {
+    Locale? localization = LocalizationService.getLocaleFromLanguage(
+        langCode: LocalizationService.langCodes[locale]);
     return BlocProvider(
       create: (context) => TodoBloc(),
       child: GetMaterialApp(
@@ -30,7 +38,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        locale: LocalizationService.locale,
+        locale: localization, //LocalizationService.locale,
         fallbackLocale: LocalizationService.fallbackLocale,
         translations: LocalizationService(),
         // initialRoute: AppRoute.routeHomeScreen(),
