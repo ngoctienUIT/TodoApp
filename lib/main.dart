@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         // initialRoute: AppRoute.routeHomeScreen(),
         // initialBinding: AppBinding(),
         // getPages: AppRoute.generateGetPages(),
-        home: const HomePage(),
+        home: HomePage(locale: localization!.toString()),
       ),
     );
   }

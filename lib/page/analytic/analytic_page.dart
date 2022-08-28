@@ -19,7 +19,7 @@ class AnalyticPage extends StatefulWidget {
 }
 
 class _AnalyticPageState extends State<AnalyticPage> {
-  final List<String> select = ["column".tr, "Line".tr];
+  final List<String> select = ["column".tr, "line".tr];
   int index = 0;
   DateTime date = getDateNow();
 

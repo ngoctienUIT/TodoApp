@@ -9,7 +9,8 @@ import 'package:todo_app/page/home/my_home.dart';
 import 'package:todo_app/page/setting/setting_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.locale}) : super(key: key);
+  final String locale;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -89,7 +90,10 @@ class _HomePageState extends State<HomePage> {
   Widget getPage() {
     switch (index) {
       case 0:
-        return MyHome(action: onOpen);
+        return MyHome(
+          action: onOpen,
+          locale: widget.locale,
+        );
       case 1:
         return FutureBuilder<List<Todo>>(
             future: TodoDatabase().getData(),

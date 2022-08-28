@@ -11,10 +11,13 @@ import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_state.dart';
 import 'package:todo_app/page/home/widget/build_item.dart';
+import 'package:todo_app/page/home/widget/style.dart';
 
 class MyHome extends StatefulWidget {
-  const MyHome({Key? key, required this.action}) : super(key: key);
+  const MyHome({Key? key, required this.action, required this.locale})
+      : super(key: key);
   final Function action;
+  final String locale;
 
   @override
   State<MyHome> createState() => _MyHomeState();
@@ -127,8 +130,12 @@ class _MyHomeState extends State<MyHome> {
                       child: DatePicker(
                         backDate,
                         initialSelectedDate: now,
-                        selectionColor: Colors.black,
+                        selectionColor: const Color.fromRGBO(182, 190, 240, 1),
                         selectedTextColor: Colors.white,
+                        locale: widget.locale,
+                        dayTextStyle: dayTextStyle(),
+                        dateTextStyle: dateTextStyle(),
+                        monthTextStyle: monthTextStyle(),
                         onDateChange: (date) => setState(() {
                           now = date;
                         }),
@@ -165,7 +172,11 @@ class _MyHomeState extends State<MyHome> {
                           filter);
                     }
 
-                    return const Center(child: Text("Không có dữ liệu"));
+                    return const Center(
+                        child: Text(
+                      "Không có dữ liệu",
+                      style: TextStyle(color: Color.fromRGBO(156, 166, 201, 1)),
+                    ));
                   },
                 ),
               ),
