@@ -10,7 +10,6 @@ void modalBottomSheetLanguage(BuildContext context, Function(String) action) {
         return Container(
           height: 200,
           decoration: const BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0),
               topRight: Radius.circular(10.0),

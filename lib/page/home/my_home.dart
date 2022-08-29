@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/page/handle_todo/new_todo_page.dart';
@@ -39,12 +40,7 @@ class _MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
       appBar: AppBar(
-        elevation: 0,
-        iconTheme: const IconThemeData(
-            color: Color.fromRGBO(159, 161, 184, 1), size: 25),
-        backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
         actions: [
           IconButton(
             splashColor: Colors.transparent,
@@ -62,8 +58,18 @@ class _MyHomeState extends State<MyHome> {
           IconButton(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
-            onPressed: () {},
-            icon: const Icon(FontAwesomeIcons.bell),
+            onPressed: () {
+              setState(() {
+                Get.changeThemeMode(
+                    Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                SharedPreferences.getInstance().then((preferences) {
+                  preferences.setBool("dartMode", Get.isDarkMode);
+                });
+              });
+            },
+            icon: Icon(
+              Get.isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
+            ),
           )
         ],
         leading: IconButton(
@@ -93,6 +99,7 @@ class _MyHomeState extends State<MyHome> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 10),
               const Text(
                 "What's up, TNT",
                 style: TextStyle(

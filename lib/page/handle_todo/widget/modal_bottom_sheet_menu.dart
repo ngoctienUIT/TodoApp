@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void modalBottomSheetMenu(BuildContext context,
     {required List<String> list,
@@ -14,7 +15,6 @@ void modalBottomSheetMenu(BuildContext context,
         return Container(
           height: 200,
           decoration: const BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -40,7 +40,9 @@ void modalBottomSheetMenu(BuildContext context,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: index == position ? Colors.red : Colors.black,
+                    color: index == position
+                        ? Colors.red
+                        : (Get.isDarkMode ? Colors.white : Colors.black),
                   ),
                 ),
               ),

@@ -26,19 +26,8 @@ class _AnalyticPageState extends State<AnalyticPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
       appBar: AppBar(
-        elevation: 0,
-        iconTheme: const IconThemeData(
-            color: Color.fromRGBO(159, 161, 184, 1), size: 25),
-        backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
-        title: const Text(
-          "Analytic",
-          style: TextStyle(
-              color: Color.fromRGBO(156, 166, 201, 1),
-              fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        title: const Text("Analytic"),
         leading: IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,

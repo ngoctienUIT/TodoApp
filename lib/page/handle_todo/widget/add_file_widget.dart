@@ -80,6 +80,7 @@ class _AddFileWidgetState extends State<AddFileWidget> {
         const SizedBox(width: 20),
         IconButton(
           onPressed: () {
+            FocusManager.instance.primaryFocus?.unfocus();
             show(context);
           },
           icon: const Icon(

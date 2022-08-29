@@ -8,6 +8,7 @@ import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/home_page.dart';
 import 'package:todo_app/resources/localization_service.dart';
+import 'package:todo_app/themes/themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,14 +18,19 @@ void main() async {
   );
 
   int locale = 0;
-  await SharedPreferences.getInstance()
-      .then((preferences) => locale = preferences.getInt("language") ?? 0);
-  runApp(MyApp(locale: locale));
+  bool isDartMode = false;
+  await SharedPreferences.getInstance().then((preferences) {
+    locale = preferences.getInt("language") ?? 0;
+    isDartMode = preferences.getBool("dartMode") ?? false;
+  });
+  runApp(MyApp(locale: locale, isDartMode: isDartMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required this.locale}) : super(key: key);
+  const MyApp({Key? key, required this.locale, required this.isDartMode})
+      : super(key: key);
   final int locale;
+  final bool isDartMode;
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +41,9 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Todo App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: Themes().lightTheme,
+        darkTheme: Themes().dartTheme,
+        themeMode: isDartMode ? ThemeMode.dark : ThemeMode.light,
         locale: localization, //LocalizationService.locale,
         fallbackLocale: LocalizationService.fallbackLocale,
         translations: LocalizationService(),
