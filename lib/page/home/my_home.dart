@@ -1,4 +1,5 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -101,7 +102,7 @@ class _MyHomeState extends State<MyHome> {
             children: [
               const SizedBox(height: 10),
               Text(
-                "What's up, TNT",
+                "What's up, ${FirebaseAuth.instance.currentUser != null ? FirebaseAuth.instance.currentUser!.displayName : "TNT"}",
                 style: AppStyles.h2.copyWith(
                   color: const Color.fromRGBO(77, 80, 108, 1),
                 ),
@@ -115,10 +116,7 @@ class _MyHomeState extends State<MyHome> {
                 ),
               ),
               const SizedBox(height: 5),
-              Text(
-                "today".tr,
-                style: AppStyles.p,
-              ),
+              Text("today".tr, style: AppStyles.p),
               const SizedBox(height: 20),
               if (filter)
                 Row(

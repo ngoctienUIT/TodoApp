@@ -19,11 +19,11 @@ class Themes {
         size: 25,
       ),
     ),
-    textTheme: const TextTheme(
-      headline5: TextStyle(
-        color: Color.fromRGBO(182, 190, 224, 1),
-      ),
-    ),
+    // textTheme: const TextTheme(
+    //   bodyText2: TextStyle(
+    //     color: Colors.black,
+    //   ),
+    // ),
   );
 
   final dartTheme = ThemeData.dark().copyWith(
@@ -40,10 +40,10 @@ class Themes {
         size: 25,
       ),
     ),
-    textTheme: const TextTheme(
-      headline5: TextStyle(
-        color: Colors.white,
-      ),
-    ),
+    // textTheme: const TextTheme(
+    //   bodyText2: TextStyle(
+    //     color: Colors.white,
+    //   ),
+    // ),
   );
 }

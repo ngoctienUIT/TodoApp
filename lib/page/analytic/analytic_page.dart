@@ -23,6 +23,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
   final List<String> select = ["column".tr, "line".tr];
   int index = 0;
   DateTime date = getDateNow();
+  final PageController _controller = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +58,11 @@ class _AnalyticPageState extends State<AnalyticPage> {
                       ? FontAwesomeIcons.chartColumn
                       : FontAwesomeIcons.chartLine,
                   action: () {
-                    setState(() {
-                      this.index = index;
-                    });
+                    _controller.animateToPage(
+                      index,
+                      curve: Curves.decelerate,
+                      duration: const Duration(milliseconds: 500),
+                    );
                   }),
             ),
           ),
@@ -101,7 +104,6 @@ class _AnalyticPageState extends State<AnalyticPage> {
                       )}",
                       style: AppStyles.h5.copyWith(
                         color: const Color.fromRGBO(182, 190, 224, 1),
-                        // color: Theme.of(context).textTheme.headline5!.color,
                       ),
                     )
                   ],
@@ -112,10 +114,19 @@ class _AnalyticPageState extends State<AnalyticPage> {
           widget.todoList == null
               ? const Center(child: CircularProgressIndicator())
               : Expanded(
-                  child: index == 0
-                      ? ColumnChart(todoList: widget.todoList!, date: date)
-                      : LineChartPage(todoList: widget.todoList!, date: date),
-                ),
+                  child: PageView(
+                    controller: _controller,
+                    onPageChanged: (value) {
+                      setState(() {
+                        index = value;
+                      });
+                    },
+                    children: [
+                      ColumnChart(todoList: widget.todoList!, date: date),
+                      LineChartPage(todoList: widget.todoList!, date: date),
+                    ],
+                  ),
+                )
         ],
       ),
     );

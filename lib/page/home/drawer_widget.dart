@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,6 +58,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   : ElevatedButton.icon(
                       onPressed: () async {
                         await signInGoogle();
+                        initUser();
                         setState(() {
                           BlocProvider.of<TodoBloc>(context).add(SignInEvent());
                         });
@@ -135,6 +137,21 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
 
     await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future initUser() async {
+    var firestore = FirebaseFirestore.instance
+        .collection("user")
+        .doc(FirebaseAuth.instance.currentUser!.email);
+    firestore.get().then((value) {
+      if (!value.exists) {
+        firestore.set({
+          "avatar": FirebaseAuth.instance.currentUser!.photoURL,
+          "name": FirebaseAuth.instance.currentUser!.displayName,
+          "birthday": DateTime.now()
+        });
+      }
+    });
   }
 
   Widget drawerItem(
