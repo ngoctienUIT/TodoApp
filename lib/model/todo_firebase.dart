@@ -2,18 +2,21 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 import 'package:todo_app/model/todo.dart';
-import 'package:uuid/uuid.dart';
 
 class TodoFirebase {
   static Future<String> uploadFile(
       String link, String folder, String id) async {
-    final upload = FirebaseStorage.instance
-        .ref()
-        .child("$folder/$id/${const Uuid().v1()}");
+    final upload =
+        FirebaseStorage.instance.ref().child("$folder/$id/${basename(link)}");
 
     await upload.putFile(File(link));
     return await upload.getDownloadURL();
+  }
+
+  static Future deleteFolder(String folder, String id) async {
+    FirebaseStorage.instance.ref().child("$folder/$id/").delete();
   }
 
   static Future addTodo(Todo todo) async {
@@ -61,5 +64,23 @@ class TodoFirebase {
           .update({"todo": list});
     });
     await FirebaseFirestore.instance.collection("todo").doc(id).delete();
+  }
+
+  static Future updateTodo(Todo todo) async {
+    var firestore = FirebaseFirestore.instance.collection("todo").doc(todo.id);
+    await deleteFolder("images", todo.id);
+    await deleteFolder("files", todo.id);
+
+    List<String> imageList = [];
+    for (var image in todo.images) {
+      imageList.add(await uploadFile(image, "images", todo.id));
+    }
+    todo.images = imageList;
+
+    List<String> fileList = [];
+    for (var file in todo.files) {
+      fileList.add(await uploadFile(file, "files", todo.id));
+    }
+    await firestore.update(todo.toMap());
   }
 }

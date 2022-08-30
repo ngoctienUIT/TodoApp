@@ -55,8 +55,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         scheduledNotification(event.todo);
       }
     });
-
-    on<SignInEvent>((event, emit) {});
   }
 
   Future addTodo(Todo todo) async {
@@ -81,8 +79,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
     await TodoDatabase().deleteTodo(todo.id);
   }
-
-  void syncTodo() {}
 
   Duration getDuration(int index) {
     switch (index) {

@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:todo_app/page/home/bloc/todo_bloc.dart';
-import 'package:todo_app/page/home/bloc/todo_event.dart';
+import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/model/todo_database.dart';
+import 'package:todo_app/model/todo_firebase.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({Key? key, required this.action}) : super(key: key);
@@ -59,9 +59,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       onPressed: () async {
                         await signInGoogle();
                         initUser();
-                        setState(() {
-                          BlocProvider.of<TodoBloc>(context).add(SignInEvent());
-                        });
+                        showMyDialog();
+                        setState(() {});
                       },
                       icon: const Icon(FontAwesomeIcons.google),
                       label: Text("signInWithGoogle".tr)),
@@ -150,6 +149,69 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           "name": FirebaseAuth.instance.currentUser!.displayName,
           "birthday": DateTime.now()
         });
+      }
+    });
+  }
+
+  void showMyDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Thông báo'),
+        content: const Text('Bạn có muốn giữ lại task không?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              syncTodo();
+              Navigator.pop(context);
+            },
+            child: const Text("Yes"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("No"),
+          )
+        ],
+      ),
+    );
+  }
+
+  Future syncTodo() async {
+    List<Todo> todoList = await TodoDatabase().getData();
+    for (int i = 0; i < todoList.length; i++) {
+      List<String> images = (await TodoDatabase().getImageData(todoList[i].id))
+          .map((image) => image.link)
+          .toList();
+      List<String> files = (await TodoDatabase().getFileData(todoList[i].id))
+          .map((file) => file.link)
+          .toList();
+      todoList[i].images = images;
+      todoList[i].files = files;
+    }
+    FirebaseFirestore.instance
+        .collection("data")
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        var data = value.data() as Map<String, dynamic>;
+        List<String> list = (data["todo"] as List<dynamic>)
+            .map((todo) => todo.toString())
+            .toList();
+        for (var todo in todoList) {
+          if (list.contains(todo.id)) {
+            TodoFirebase.updateTodo(todo);
+          } else {
+            TodoFirebase.addTodo(todo);
+          }
+        }
+      } else {
+        for (var todo in todoList) {
+          print(todo.images);
+          TodoFirebase.addTodo(todo);
+        }
       }
     });
   }
