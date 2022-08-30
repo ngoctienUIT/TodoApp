@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:todo_app/page/home/bloc/todo_bloc.dart';
+import 'package:todo_app/page/home/bloc/todo_event.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({Key? key, required this.action}) : super(key: key);
@@ -53,20 +56,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     )
                   : ElevatedButton.icon(
                       onPressed: () async {
-                        final GoogleSignInAccount? googleUser =
-                            await GoogleSignIn().signIn();
-
-                        final GoogleSignInAuthentication? googleAuth =
-                            await googleUser?.authentication;
-
-                        final credential = GoogleAuthProvider.credential(
-                          accessToken: googleAuth?.accessToken,
-                          idToken: googleAuth?.idToken,
-                        );
-
-                        await FirebaseAuth.instance
-                            .signInWithCredential(credential);
-                        setState(() {});
+                        await signInGoogle();
+                        setState(() {
+                          BlocProvider.of<TodoBloc>(context).add(SignInEvent());
+                        });
                       },
                       icon: const Icon(FontAwesomeIcons.google),
                       label: Text("signInWithGoogle".tr)),
@@ -128,6 +121,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         ),
       ),
     );
+  }
+
+  Future signInGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   Widget drawerItem(

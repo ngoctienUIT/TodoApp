@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/analytic/widget/line_chart_my_data.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class MyLineChart extends StatelessWidget {
   const MyLineChart(
@@ -144,18 +145,18 @@ class MyLineChart extends StatelessWidget {
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff75729e),
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
-
     String text = "";
     for (int i = 0; i <= max; i += max ~/ 10) {
       if (value == i) text = "$i";
     }
 
-    return Text(text, style: style, textAlign: TextAlign.center);
+    return Text(
+      text,
+      style: AppStyles.h6.copyWith(
+        color: const Color(0xff75729e),
+      ),
+      textAlign: TextAlign.center,
+    );
   }
 
   SideTitles leftTitles() => SideTitles(
@@ -166,14 +167,14 @@ class MyLineChart extends StatelessWidget {
       );
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff72719b),
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
     List<String> titles = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
-    Widget text = Text(titles[value.toInt()], style: style);
+    Widget text = Text(
+      titles[value.toInt()],
+      style: AppStyles.h5.copyWith(
+        color: const Color(0xff72719b),
+      ),
+    );
 
     return SideTitleWidget(
       axisSide: meta.axisSide,

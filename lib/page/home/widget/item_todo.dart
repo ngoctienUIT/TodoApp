@@ -11,6 +11,7 @@ import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_event.dart';
 import 'package:todo_app/page/home/widget/custom_button.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class ItemTodo extends StatefulWidget {
   const ItemTodo({Key? key, required this.todo, required this.filter})
@@ -79,9 +80,7 @@ class _ItemTodoState extends State<ItemTodo> {
                         widget.todo.title,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        style: AppStyles.h4.copyWith(
                           color: widget.todo.status
                               ? Colors.white54
                               : Colors.white,
@@ -286,9 +285,7 @@ class _ItemTodoState extends State<ItemTodo> {
                     },
                     child: Text(
                       "close".tr,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      style: AppStyles.h5.copyWith(
                         color: Colors.black,
                       ),
                     ),

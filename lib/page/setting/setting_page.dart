@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/page/setting/widget/modal_bottom_sheet_language.dart';
 import 'package:todo_app/resources/localization_service.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key, required this.action}) : super(key: key);
@@ -16,17 +17,8 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
       appBar: AppBar(
-        elevation: 0,
-        iconTheme: const IconThemeData(
-            color: Color.fromRGBO(159, 161, 184, 1), size: 25),
-        // backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
-        title: Text(
-          "setting".tr,
-          style: const TextStyle(color: Color.fromRGBO(156, 166, 201, 1)),
-        ),
-        // centerTitle: true,
+        title: Text("setting".tr),
         leading: IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -60,7 +52,7 @@ class _SettingPageState extends State<SettingPage> {
           const SizedBox(width: 20),
           Text(
             "notification".tr,
-            style: const TextStyle(fontSize: 20),
+            style: AppStyles.p,
           ),
           const Spacer(),
           Switch(
@@ -101,7 +93,7 @@ class _SettingPageState extends State<SettingPage> {
             const SizedBox(width: 20),
             Text(
               "language".tr,
-              style: const TextStyle(fontSize: 20),
+              style: AppStyles.p,
             ),
             const Spacer(),
             const Icon(

@@ -18,3 +18,5 @@ class CompleteEvent extends TodoEvent {
   final Todo todo;
   CompleteEvent({required this.todo});
 }
+
+class SignInEvent extends TodoEvent {}

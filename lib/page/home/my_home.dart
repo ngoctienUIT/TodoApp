@@ -12,7 +12,7 @@ import 'package:todo_app/page/handle_todo/pick_function.dart';
 import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_state.dart';
 import 'package:todo_app/page/home/widget/build_item.dart';
-import 'package:todo_app/page/home/widget/style.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class MyHome extends StatefulWidget {
   const MyHome({Key? key, required this.action, required this.locale})
@@ -100,26 +100,24 @@ class _MyHomeState extends State<MyHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 "What's up, TNT",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(77, 80, 108, 1),
+                style: AppStyles.h2.copyWith(
+                  color: const Color.fromRGBO(77, 80, 108, 1),
                 ),
               ),
               const SizedBox(height: 20),
               Text(
                 DateFormat.yMMMMd().format(DateTime.now()),
-                style: const TextStyle(
-                  fontSize: 30,
-                  color: Color.fromRGBO(156, 166, 201, 1),
+                style: AppStyles.h1.copyWith(
+                  fontWeight: FontWeight.normal,
+                  color: const Color.fromRGBO(156, 166, 201, 1),
                 ),
               ),
               const SizedBox(height: 5),
               Text(
                 "today".tr,
-                style: const TextStyle(fontSize: 20),
+                style: AppStyles.p,
               ),
               const SizedBox(height: 20),
               if (filter)
@@ -140,9 +138,9 @@ class _MyHomeState extends State<MyHome> {
                         selectionColor: const Color.fromRGBO(182, 190, 240, 1),
                         selectedTextColor: Colors.white,
                         locale: widget.locale,
-                        dayTextStyle: dayTextStyle(),
-                        dateTextStyle: dateTextStyle(),
-                        monthTextStyle: monthTextStyle(),
+                        dayTextStyle: AppStyles.dayTextStyle,
+                        dateTextStyle: AppStyles.dateTextStyle,
+                        monthTextStyle: AppStyles.monthTextStyle,
                         onDateChange: (date) => setState(() {
                           now = date;
                         }),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:todo_app/page/handle_todo/pick_function.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 Widget pickTimeWidgetItem(BuildContext context,
     {required String title,
@@ -10,10 +11,8 @@ Widget pickTimeWidgetItem(BuildContext context,
     children: [
       Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Color.fromRGBO(182, 190, 224, 1),
+        style: AppStyles.h5.copyWith(
+          color: const Color.fromRGBO(182, 190, 224, 1),
         ),
       ),
       const SizedBox(height: 10),

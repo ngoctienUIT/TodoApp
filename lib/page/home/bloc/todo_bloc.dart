@@ -62,7 +62,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         scheduledNotification(event.todo);
       }
     });
+
+    on<SignInEvent>((event, emit) {});
   }
+
+  void syncTodo() {}
 
   Duration getDuration(int index) {
     switch (index) {

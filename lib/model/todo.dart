@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/page/handle_todo/pick_function.dart';
@@ -63,6 +64,23 @@ class Todo {
       };
 
   factory Todo.fromMapSQL(Map<String, dynamic> data) {
+    return Todo(
+      id: data["id"],
+      code: data["code"],
+      title: data["title"],
+      content: data["content"],
+      repeat: data["repeat"],
+      remind: data["remind"],
+      date: DateFormat("dd/MM/yyyy").parse(data["date"]),
+      startTime: stringToTimeOfDate(data["startTime"]),
+      finishTime: stringToTimeOfDate(data["finishTime"]),
+      status: data["status"] == 0 ? false : true,
+      color: Color(data["color"]),
+    );
+  }
+
+  factory Todo.fromSnapshot(DocumentSnapshot snapshot) {
+    var data = snapshot.data() as Map<String, dynamic>;
     return Todo(
       id: data["id"],
       code: data["code"],
