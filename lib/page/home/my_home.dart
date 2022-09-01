@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:todo_app/page/home/bloc/todo_bloc.dart';
 import 'package:todo_app/page/home/bloc/todo_state.dart';
 import 'package:todo_app/page/home/widget/build_item.dart';
 import 'package:todo_app/values/app_styles.dart';
+import 'package:todo_app/model/user.dart' as myuser;
 
 class MyHome extends StatefulWidget {
   const MyHome({Key? key, required this.action, required this.locale})
@@ -101,12 +103,30 @@ class _MyHomeState extends State<MyHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
-              Text(
-                "What's up, ${FirebaseAuth.instance.currentUser != null ? FirebaseAuth.instance.currentUser!.displayName : "TNT"}",
-                style: AppStyles.h2.copyWith(
-                  color: const Color.fromRGBO(77, 80, 108, 1),
-                ),
-              ),
+              StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("user")
+                      .doc(FirebaseAuth.instance.currentUser!.email.toString())
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      myuser.User user =
+                          myuser.User.fromSnapshot(snapshot.requireData);
+                      return Text(
+                        "What's up, ${user.name}",
+                        maxLines: 1,
+                        style: AppStyles.h2.copyWith(
+                          color: const Color.fromRGBO(77, 80, 108, 1),
+                        ),
+                      );
+                    }
+                    return Text(
+                      "What's up, TNT",
+                      style: AppStyles.h2.copyWith(
+                        color: const Color.fromRGBO(77, 80, 108, 1),
+                      ),
+                    );
+                  }),
               const SizedBox(height: 20),
               Text(
                 DateFormat.yMMMMd().format(DateTime.now()),

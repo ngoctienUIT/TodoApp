@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/page/setting/change_profile_page.dart';
 import 'package:todo_app/page/setting/widget/modal_bottom_sheet_language.dart';
 import 'package:todo_app/resources/localization_service.dart';
 import 'package:todo_app/values/app_styles.dart';
@@ -29,7 +31,23 @@ class _SettingPageState extends State<SettingPage> {
         ),
       ),
       body: Column(
-        children: [languageSetting(), notifySetting()],
+        children: [
+          if (FirebaseAuth.instance.currentUser != null)
+            itemSetting(
+              action: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChangeProfilePage(),
+                  ),
+                );
+              },
+              icon: Icons.person,
+              text: "Account",
+            ),
+          languageSetting(),
+          notifySetting()
+        ],
       ),
     );
   }
@@ -64,6 +82,38 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
+  Widget itemSetting(
+      {required Function action,
+      required String text,
+      required IconData icon}) {
+    return InkWell(
+      onTap: () {
+        action();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(90)),
+              child: Icon(icon, size: 30, color: Colors.white),
+            ),
+            const SizedBox(width: 20),
+            Text(text, style: AppStyles.p),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.orange,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget languageSetting() {
     return InkWell(
       onTap: () {
@@ -91,10 +141,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
             const SizedBox(width: 20),
-            Text(
-              "language".tr,
-              style: AppStyles.p,
-            ),
+            Text("language".tr, style: AppStyles.p),
             const Spacer(),
             const Icon(
               Icons.arrow_forward_ios_rounded,

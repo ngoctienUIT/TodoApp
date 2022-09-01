@@ -4,12 +4,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/model/user.dart' as myuser;
 
 class TodoFirebase {
-  static Future<String> uploadFile(
-      String link, String folder, String id) async {
-    final upload =
-        FirebaseStorage.instance.ref().child("$folder/$id/${basename(link)}");
+  static Future<String> uploadFile(String link,
+      {String? folder, String? id}) async {
+    Reference upload;
+    if (folder != null) {
+      upload =
+          FirebaseStorage.instance.ref().child("$folder/$id/${basename(link)}");
+    } else {
+      upload = FirebaseStorage.instance
+          .ref()
+          .child("avatar/${FirebaseAuth.instance.currentUser!.email}");
+    }
 
     await upload.putFile(File(link));
     return await upload.getDownloadURL();
@@ -23,12 +31,12 @@ class TodoFirebase {
     var firestore = FirebaseFirestore.instance.collection("todo").doc(todo.id);
     List<String> imageList = [];
     for (var image in todo.images) {
-      imageList.add(await uploadFile(image, "images", todo.id));
+      imageList.add(await uploadFile(image, folder: "images", id: todo.id));
     }
     todo.images = imageList;
     List<String> fileList = [];
     for (var file in todo.files) {
-      fileList.add(await uploadFile(file, "files", todo.id));
+      fileList.add(await uploadFile(file, folder: "files", id: todo.id));
     }
     todo.files = fileList;
     var firestoreData = FirebaseFirestore.instance
@@ -73,14 +81,39 @@ class TodoFirebase {
 
     List<String> imageList = [];
     for (var image in todo.images) {
-      imageList.add(await uploadFile(image, "images", todo.id));
+      imageList.add(await uploadFile(image, folder: "images", id: todo.id));
     }
     todo.images = imageList;
 
     List<String> fileList = [];
     for (var file in todo.files) {
-      fileList.add(await uploadFile(file, "files", todo.id));
+      fileList.add(await uploadFile(file, folder: "files", id: todo.id));
     }
     await firestore.update(todo.toMap());
+  }
+
+  static Future initUser() async {
+    var firestore = FirebaseFirestore.instance
+        .collection("user")
+        .doc(FirebaseAuth.instance.currentUser!.email);
+    firestore.get().then((value) {
+      if (!value.exists) {
+        firestore.set({
+          "avatar": FirebaseAuth.instance.currentUser!.photoURL,
+          "name": FirebaseAuth.instance.currentUser!.displayName,
+          "birthday": DateTime.now()
+        });
+      }
+    });
+  }
+
+  static Future updateUser(myuser.User user) async {
+    var firestore = FirebaseFirestore.instance
+        .collection("user")
+        .doc(FirebaseAuth.instance.currentUser!.email);
+    if (await File(user.avatar).exists()) {
+      user.avatar = await uploadFile(user.avatar);
+    }
+    firestore.update(user.toMap());
   }
 }

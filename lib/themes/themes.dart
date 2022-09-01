@@ -3,7 +3,7 @@ import 'package:todo_app/values/app_colors.dart';
 import 'package:todo_app/values/app_styles.dart';
 
 class Themes {
-  final lightTheme = ThemeData.light().copyWith(
+  static final lightTheme = ThemeData.light().copyWith(
     backgroundColor: AppColors.backgroundColorLight,
     bottomSheetTheme:
         BottomSheetThemeData(backgroundColor: AppColors.backgroundColorLight),
@@ -26,7 +26,7 @@ class Themes {
     // ),
   );
 
-  final dartTheme = ThemeData.dark().copyWith(
+  static final dartTheme = ThemeData.dark().copyWith(
     backgroundColor: AppColors.backgroundColorDart,
     bottomSheetTheme:
         BottomSheetThemeData(backgroundColor: AppColors.backgroundColorDart),

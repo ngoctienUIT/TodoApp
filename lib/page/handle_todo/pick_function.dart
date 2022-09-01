@@ -25,12 +25,14 @@ Future<List<String>> pickImage() async {
 }
 
 Future<DateTime?> pickDate(BuildContext context,
-        {required DateTime initDate, DateTime? firstDate}) =>
+        {required DateTime initDate,
+        DateTime? firstDate,
+        DateTime? lastDate}) =>
     showDatePicker(
       context: context,
       initialDate: initDate,
       firstDate: firstDate ?? DateTime.now(),
-      lastDate: DateTime(2100),
+      lastDate: lastDate ?? DateTime(2100),
     );
 
 Future<TimeOfDay?> pickTime(BuildContext context) => showTimePicker(

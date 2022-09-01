@@ -7,6 +7,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/model/todo_firebase.dart';
+import 'package:todo_app/model/user.dart' as myuser;
+import 'package:todo_app/page/home/widget/drawer_item.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({Key? key, required this.action}) : super(key: key);
@@ -28,42 +30,23 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              ClipOval(
-                child: FirebaseAuth.instance.currentUser != null
-                    ? Image.network(
-                        FirebaseAuth.instance.currentUser!.photoURL.toString(),
-                        height: 100,
-                        width: 100,
-                      )
-                    : Image.asset(
-                        "assets/images/user.png",
-                        height: 100,
-                        width: 100,
-                      ),
-              ),
-              const SizedBox(height: 10),
-              FirebaseAuth.instance.currentUser != null
-                  ? SizedBox(
-                      width: 150,
-                      child: Text(
-                        FirebaseAuth.instance.currentUser!.displayName
-                            .toString(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 25,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  : ElevatedButton.icon(
-                      onPressed: () async {
-                        await signInGoogle();
-                        initUser();
-                        showMyDialog();
-                        setState(() {});
+              FirebaseAuth.instance.currentUser == null
+                  ? notLogin()
+                  : StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("user")
+                          .doc(FirebaseAuth.instance.currentUser!.email
+                              .toString())
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          myuser.User user =
+                              myuser.User.fromSnapshot(snapshot.requireData);
+                          return logged(user);
+                        }
+                        return const Center(child: CircularProgressIndicator());
                       },
-                      icon: const Icon(FontAwesomeIcons.google),
-                      label: Text("signInWithGoogle".tr)),
+                    ),
               const SizedBox(height: 20),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -124,6 +107,58 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
   }
 
+  Widget logged(myuser.User user) {
+    return Column(
+      children: [
+        ClipOval(
+          child: Image.network(
+            user.avatar,
+            height: 100,
+            width: 100,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          width: 150,
+          child: Text(
+            user.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 25,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget notLogin() {
+    return Column(
+      children: [
+        ClipOval(
+          child: Image.asset(
+            "assets/images/user.png",
+            height: 100,
+            width: 100,
+          ),
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton.icon(
+          onPressed: () async {
+            await signInGoogle();
+            TodoFirebase.initUser();
+            showMyDialog();
+            setState(() {});
+          },
+          icon: const Icon(FontAwesomeIcons.google),
+          label: Text("signInWithGoogle".tr),
+        ),
+      ],
+    );
+  }
+
   Future signInGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -138,48 +173,35 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  Future initUser() async {
-    var firestore = FirebaseFirestore.instance
-        .collection("user")
-        .doc(FirebaseAuth.instance.currentUser!.email);
-    firestore.get().then((value) {
-      if (!value.exists) {
-        firestore.set({
-          "avatar": FirebaseAuth.instance.currentUser!.photoURL,
-          "name": FirebaseAuth.instance.currentUser!.displayName,
-          "birthday": DateTime.now()
-        });
-      }
-    });
-  }
-
-  void showMyDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Thông báo'),
-        content: const Text('Bạn có muốn giữ lại task không?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              syncTodo();
-              Navigator.pop(context);
-            },
-            child: const Text("Yes"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("No"),
-          )
-        ],
-      ),
-    );
-  }
-
-  Future syncTodo() async {
+  Future showMyDialog() async {
     List<Todo> todoList = await TodoDatabase().getData();
+    if (todoList.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Thông báo'),
+          content: const Text('Bạn có muốn giữ lại task không?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                syncTodo(todoList);
+                Navigator.pop(context);
+              },
+              child: const Text("Yes"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("No"),
+            )
+          ],
+        ),
+      );
+    }
+  }
+
+  Future syncTodo(List<Todo> todoList) async {
     for (int i = 0; i < todoList.length; i++) {
       List<String> images = (await TodoDatabase().getImageData(todoList[i].id))
           .map((image) => image.link)
@@ -209,41 +231,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         }
       } else {
         for (var todo in todoList) {
-          print(todo.images);
           TodoFirebase.addTodo(todo);
         }
       }
     });
-  }
-
-  Widget drawerItem(
-      {required IconData icon,
-      required String title,
-      required Function action,
-      double size = 20}) {
-    return InkWell(
-      onTap: () {
-        action();
-      },
-      splashColor: Colors.transparent,
-      child: Container(
-        width: 200,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: size,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              title,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            )
-          ],
-        ),
-      ),
-    );
   }
 }
