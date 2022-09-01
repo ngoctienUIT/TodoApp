@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/home/widget/item_todo.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 Widget buildItem(List<Todo> todoList, bool filter) {
   if (todoList.isEmpty) {
-    return const Center(
+    return Center(
       child: Text(
         "Không có dữ liệu!",
-        style: TextStyle(
-          fontSize: 20,
-          color: Color.fromRGBO(156, 166, 201, 1),
-          fontWeight: FontWeight.bold,
-        ),
+        style: AppStyles.h3
+            .copyWith(color: const Color.fromRGBO(156, 166, 201, 1)),
       ),
     );
   }

@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/page/setting/change_profile_page.dart';
 import 'package:todo_app/page/setting/widget/modal_bottom_sheet_language.dart';
 import 'package:todo_app/resources/localization_service.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key, required this.action}) : super(key: key);
@@ -16,17 +19,8 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
       appBar: AppBar(
-        elevation: 0,
-        iconTheme: const IconThemeData(
-            color: Color.fromRGBO(159, 161, 184, 1), size: 25),
-        // backgroundColor: const Color.fromRGBO(250, 250, 255, 1),
-        title: Text(
-          "setting".tr,
-          style: const TextStyle(color: Color.fromRGBO(156, 166, 201, 1)),
-        ),
-        // centerTitle: true,
+        title: Text("setting".tr),
         leading: IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -37,7 +31,23 @@ class _SettingPageState extends State<SettingPage> {
         ),
       ),
       body: Column(
-        children: [languageSetting(), notifySetting()],
+        children: [
+          if (FirebaseAuth.instance.currentUser != null)
+            itemSetting(
+              action: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChangeProfilePage(),
+                  ),
+                );
+              },
+              icon: Icons.person,
+              text: "Account",
+            ),
+          languageSetting(),
+          notifySetting()
+        ],
       ),
     );
   }
@@ -60,7 +70,7 @@ class _SettingPageState extends State<SettingPage> {
           const SizedBox(width: 20),
           Text(
             "notification".tr,
-            style: const TextStyle(fontSize: 20),
+            style: AppStyles.p,
           ),
           const Spacer(),
           Switch(
@@ -68,6 +78,38 @@ class _SettingPageState extends State<SettingPage> {
             onChanged: (value) {},
           ),
         ],
+      ),
+    );
+  }
+
+  Widget itemSetting(
+      {required Function action,
+      required String text,
+      required IconData icon}) {
+    return InkWell(
+      onTap: () {
+        action();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(90)),
+              child: Icon(icon, size: 30, color: Colors.white),
+            ),
+            const SizedBox(width: 20),
+            Text(text, style: AppStyles.p),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.orange,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -99,10 +141,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
             const SizedBox(width: 20),
-            Text(
-              "language".tr,
-              style: const TextStyle(fontSize: 20),
-            ),
+            Text("language".tr, style: AppStyles.p),
             const Spacer(),
             const Icon(
               Icons.arrow_forward_ios_rounded,

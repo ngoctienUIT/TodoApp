@@ -41,8 +41,8 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Todo App',
-        theme: Themes().lightTheme,
-        darkTheme: Themes().dartTheme,
+        theme: Themes.lightTheme,
+        darkTheme: Themes.dartTheme,
         themeMode: isDartMode ? ThemeMode.dark : ThemeMode.light,
         locale: localization, //LocalizationService.locale,
         fallbackLocale: LocalizationService.fallbackLocale,

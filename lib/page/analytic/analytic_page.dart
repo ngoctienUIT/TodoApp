@@ -7,6 +7,7 @@ import 'package:todo_app/page/analytic/widget/analytic_button.dart';
 import 'package:todo_app/page/analytic/widget/column_chart.dart';
 import 'package:todo_app/page/analytic/widget/line_chart_page.dart';
 import 'package:todo_app/page/handle_todo/pick_function.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class AnalyticPage extends StatefulWidget {
   const AnalyticPage({Key? key, required this.action, this.todoList})
@@ -22,6 +23,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
   final List<String> select = ["column".tr, "line".tr];
   int index = 0;
   DateTime date = getDateNow();
+  final PageController _controller = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +58,11 @@ class _AnalyticPageState extends State<AnalyticPage> {
                       ? FontAwesomeIcons.chartColumn
                       : FontAwesomeIcons.chartLine,
                   action: () {
-                    setState(() {
-                      this.index = index;
-                    });
+                    _controller.animateToPage(
+                      index,
+                      curve: Curves.decelerate,
+                      duration: const Duration(milliseconds: 500),
+                    );
                   }),
             ),
           ),
@@ -98,10 +102,9 @@ class _AnalyticPageState extends State<AnalyticPage> {
                       )} - ${DateFormat("dd/MM/yyyy").format(
                         date.add(Duration(days: 7 - date.weekday)),
                       )}",
-                      style: const TextStyle(
-                          color: Color.fromRGBO(182, 190, 224, 1),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                      style: AppStyles.h5.copyWith(
+                        color: const Color.fromRGBO(182, 190, 224, 1),
+                      ),
                     )
                   ],
                 ),
@@ -111,10 +114,19 @@ class _AnalyticPageState extends State<AnalyticPage> {
           widget.todoList == null
               ? const Center(child: CircularProgressIndicator())
               : Expanded(
-                  child: index == 0
-                      ? ColumnChart(todoList: widget.todoList!, date: date)
-                      : LineChartPage(todoList: widget.todoList!, date: date),
-                ),
+                  child: PageView(
+                    controller: _controller,
+                    onPageChanged: (value) {
+                      setState(() {
+                        index = value;
+                      });
+                    },
+                    children: [
+                      ColumnChart(todoList: widget.todoList!, date: date),
+                      LineChartPage(todoList: widget.todoList!, date: date),
+                    ],
+                  ),
+                )
         ],
       ),
     );

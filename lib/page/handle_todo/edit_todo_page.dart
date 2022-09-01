@@ -37,6 +37,7 @@ class _EditTodoPageState extends State<EditTodoPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+          FocusManager.instance.primaryFocus?.unfocus();
           widget.todo.content = _contentController.text;
           widget.todo.title = _titleController.text;
           await TodoDatabase().updateTodo(widget.todo);

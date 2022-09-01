@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/values/app_colors.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 class Themes {
-  final lightTheme = ThemeData.light().copyWith(
+  static final lightTheme = ThemeData.light().copyWith(
     backgroundColor: AppColors.backgroundColorLight,
     bottomSheetTheme:
         BottomSheetThemeData(backgroundColor: AppColors.backgroundColorLight),
@@ -10,18 +11,22 @@ class Themes {
       backgroundColor: AppColors.backgroundColorLight,
       centerTitle: true,
       elevation: 0,
-      titleTextStyle: const TextStyle(
-        color: Color.fromRGBO(156, 166, 201, 1),
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
+      titleTextStyle: AppStyles.h3.copyWith(
+        color: const Color.fromRGBO(156, 166, 201, 1),
       ),
       iconTheme: const IconThemeData(
         color: Color.fromRGBO(159, 161, 184, 1),
         size: 25,
       ),
     ),
+    // textTheme: const TextTheme(
+    //   bodyText2: TextStyle(
+    //     color: Colors.black,
+    //   ),
+    // ),
   );
-  final dartTheme = ThemeData.dark().copyWith(
+
+  static final dartTheme = ThemeData.dark().copyWith(
     backgroundColor: AppColors.backgroundColorDart,
     bottomSheetTheme:
         BottomSheetThemeData(backgroundColor: AppColors.backgroundColorDart),
@@ -29,15 +34,16 @@ class Themes {
       backgroundColor: AppColors.backgroundColorDart,
       centerTitle: true,
       elevation: 0,
-      titleTextStyle: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-      ),
+      titleTextStyle: AppStyles.h3.copyWith(color: Colors.white),
       iconTheme: const IconThemeData(
         color: Colors.white,
         size: 25,
       ),
     ),
+    // textTheme: const TextTheme(
+    //   bodyText2: TextStyle(
+    //     color: Colors.white,
+    //   ),
+    // ),
   );
 }

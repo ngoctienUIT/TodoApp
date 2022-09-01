@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 void modalBottomSheetLanguage(BuildContext context, Function(String) action) {
   showModalBottomSheet(
@@ -25,13 +26,7 @@ void modalBottomSheetLanguage(BuildContext context, Function(String) action) {
                 child: Row(
                   children: [
                     const SizedBox(width: 20),
-                    const Text(
-                      "Tiếng Việt",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("Tiếng Việt", style: AppStyles.h4),
                     const Spacer(),
                     Image.asset("assets/images/vietnam.png", width: 55),
                     const SizedBox(width: 20),
@@ -45,13 +40,7 @@ void modalBottomSheetLanguage(BuildContext context, Function(String) action) {
                 child: Row(
                   children: [
                     const SizedBox(width: 20),
-                    const Text(
-                      "English",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("English", style: AppStyles.h4),
                     const Spacer(),
                     Image.asset("assets/images/english.png", width: 55),
                     const SizedBox(width: 20)

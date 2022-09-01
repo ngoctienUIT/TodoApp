@@ -52,6 +52,7 @@ class _NewTodoPageState extends State<NewTodoPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+          FocusManager.instance.primaryFocus?.unfocus();
           BlocProvider.of<TodoBloc>(context).add(AddEvent(todo: todo));
           Navigator.pop(context);
         },

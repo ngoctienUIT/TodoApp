@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 Widget customButton(
     {required Color color, required Function action, required String text}) {
@@ -19,7 +20,7 @@ Widget customButton(
       },
       child: Text(
         text,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: AppStyles.h5,
       ),
     ),
   );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 void modalBottomSheetMenu(BuildContext context,
     {required List<String> list,
@@ -37,9 +38,7 @@ void modalBottomSheetMenu(BuildContext context,
                 list.length,
                 (index) => Text(
                   list[index],
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  style: AppStyles.h3.copyWith(
                     color: index == position
                         ? Colors.red
                         : (Get.isDarkMode ? Colors.white : Colors.black),

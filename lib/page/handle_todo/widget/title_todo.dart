@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/values/app_styles.dart';
 
 Widget titleTodo(
     {required TextEditingController titleController,
@@ -11,11 +12,11 @@ Widget titleTodo(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: TextField(
             controller: titleController,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            decoration: const InputDecoration(
+            style: AppStyles.h3,
+            decoration: InputDecoration(
               border: InputBorder.none,
-              labelStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              hintStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              labelStyle: AppStyles.h3,
+              hintStyle: AppStyles.h3,
               hintText: 'Title',
             ),
             maxLines: 1,
