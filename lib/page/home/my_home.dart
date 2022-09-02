@@ -103,30 +103,38 @@ class _MyHomeState extends State<MyHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
-              StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("user")
-                      .doc(FirebaseAuth.instance.currentUser!.email.toString())
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      myuser.User user =
-                          myuser.User.fromSnapshot(snapshot.requireData);
-                      return Text(
-                        "What's up, ${user.name}",
-                        maxLines: 1,
-                        style: AppStyles.h2.copyWith(
-                          color: const Color.fromRGBO(77, 80, 108, 1),
-                        ),
-                      );
-                    }
-                    return Text(
+              FirebaseAuth.instance.currentUser != null
+                  ? StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("user")
+                          .doc(FirebaseAuth.instance.currentUser!.email
+                              .toString())
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          myuser.User user =
+                              myuser.User.fromSnapshot(snapshot.requireData);
+                          return Text(
+                            "What's up, ${user.name}",
+                            maxLines: 1,
+                            style: AppStyles.h2.copyWith(
+                              color: const Color.fromRGBO(77, 80, 108, 1),
+                            ),
+                          );
+                        }
+                        return Text(
+                          "What's up, TNT",
+                          style: AppStyles.h2.copyWith(
+                            color: const Color.fromRGBO(77, 80, 108, 1),
+                          ),
+                        );
+                      })
+                  : Text(
                       "What's up, TNT",
                       style: AppStyles.h2.copyWith(
                         color: const Color.fromRGBO(77, 80, 108, 1),
                       ),
-                    );
-                  }),
+                    ),
               const SizedBox(height: 20),
               Text(
                 DateFormat.yMMMMd().format(DateTime.now()),

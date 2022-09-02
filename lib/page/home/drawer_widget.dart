@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,6 +10,8 @@ import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/model/todo_database.dart';
 import 'package:todo_app/model/todo_firebase.dart';
 import 'package:todo_app/model/user.dart' as myuser;
+import 'package:todo_app/page/home/bloc/todo_bloc.dart';
+import 'package:todo_app/page/home/bloc/todo_event.dart';
 import 'package:todo_app/page/home/widget/drawer_item.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -19,6 +23,27 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
+  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> streamSub;
+  late List<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>>
+      streamSubList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (FirebaseAuth.instance.currentUser != null) listenListTodo();
+  }
+
+  @override
+  void dispose() {
+    if (FirebaseAuth.instance.currentUser != null) {
+      streamSub.cancel();
+      for (var element in streamSubList) {
+        element.cancel();
+      }
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +113,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         icon: FontAwesomeIcons.arrowRightFromBracket,
                         title: "logout".tr,
                         action: () async {
+                          streamSub.cancel();
+                          for (var element in streamSubList) {
+                            element.cancel();
+                          }
                           await FirebaseAuth.instance.signOut();
                           await GoogleSignIn().signOut();
                           setState(() {});
@@ -147,10 +176,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         const SizedBox(height: 10),
         ElevatedButton.icon(
           onPressed: () async {
-            await signInGoogle();
-            TodoFirebase.initUser();
-            showMyDialog();
-            setState(() {});
+            if (await signInGoogle()) {
+              TodoFirebase.initUser();
+              showMyDialog();
+              setState(() {});
+            }
           },
           icon: const Icon(FontAwesomeIcons.google),
           label: Text("signInWithGoogle".tr),
@@ -159,18 +189,24 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
   }
 
-  Future signInGoogle() async {
+  Future<bool> signInGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      listenListTodo();
+      widget.action(0);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future showMyDialog() async {
@@ -199,6 +235,49 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         ),
       );
     }
+  }
+
+  Future listenListTodo() async {
+    streamSub = FirebaseFirestore.instance
+        .collection("data")
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .snapshots()
+        .listen((event) async {
+      var data = event.data() as Map<String, dynamic>;
+      List<String> list = (data["todo"] as List<dynamic>)
+          .map((todo) => todo.toString())
+          .toList();
+      List<String> todoList =
+          (await TodoDatabase().getData()).map((todo) => todo.id).toList();
+      for (var todo in list) {
+        listenTodo(todo);
+        if (!todoList.contains(todo)) {
+          await FirebaseFirestore.instance
+              .collection("todo")
+              .doc(todo)
+              .get()
+              .then((value) async {
+            Todo todoData = Todo.fromSnapshot(value);
+            await TodoDatabase().insertTodo(todoData);
+          });
+        }
+      }
+      if (!mounted) return;
+      BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
+    });
+  }
+
+  Future listenTodo(String id) async {
+    streamSubList.add(FirebaseFirestore.instance
+        .collection("todo")
+        .doc(id)
+        .snapshots()
+        .listen((event) async {
+      Todo todo = Todo.fromSnapshot(event);
+      await TodoDatabase().updateTodo(todo);
+      if (!mounted) return;
+      BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
+    }));
   }
 
   Future syncTodo(List<Todo> todoList) async {

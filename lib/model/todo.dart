@@ -41,9 +41,9 @@ class Todo {
         "content": content,
         "repeat": repeat,
         "remind": remind,
-        "date": date,
-        // "startTime": startTime,
-        // "finishTime": finishTime,
+        "date": DateFormat("dd/MM/yyyy").format(date),
+        "startTime": timeOfDateToString(startTime),
+        "finishTime": timeOfDateToString(finishTime),
         "status": status,
         "images": images,
         "files": files,
@@ -84,7 +84,7 @@ class Todo {
     var data = snapshot.data() as Map<String, dynamic>;
     return Todo(
       id: data["id"],
-      code: data["code"],
+      code: data["id"].hashCode,
       title: data["title"],
       content: data["content"],
       repeat: data["repeat"],
