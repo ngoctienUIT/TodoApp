@@ -24,7 +24,7 @@ Widget pickTimeWidgetItem(BuildContext context,
           }
         },
         style: OutlinedButton.styleFrom(
-          primary: const Color.fromRGBO(182, 190, 224, 1),
+          foregroundColor: const Color.fromRGBO(182, 190, 224, 1),
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
