@@ -24,16 +24,23 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> streamSub;
+  late List<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>>
+      streamSubList = [];
 
   @override
   void initState() {
     super.initState();
-    if (FirebaseAuth.instance.currentUser != null) listenTodo();
+    if (FirebaseAuth.instance.currentUser != null) listenListTodo();
   }
 
   @override
   void dispose() {
-    if (FirebaseAuth.instance.currentUser != null) streamSub.cancel();
+    if (FirebaseAuth.instance.currentUser != null) {
+      streamSub.cancel();
+      for (var element in streamSubList) {
+        element.cancel();
+      }
+    }
     super.dispose();
   }
 
@@ -107,6 +114,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         title: "logout".tr,
                         action: () async {
                           streamSub.cancel();
+                          for (var element in streamSubList) {
+                            element.cancel();
+                          }
                           await FirebaseAuth.instance.signOut();
                           await GoogleSignIn().signOut();
                           setState(() {});
@@ -191,7 +201,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-      listenTodo();
+      listenListTodo();
       widget.action(0);
       return true;
     } else {
@@ -227,7 +237,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
   }
 
-  Future listenTodo() async {
+  Future listenListTodo() async {
     streamSub = FirebaseFirestore.instance
         .collection("data")
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
@@ -237,10 +247,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       List<String> list = (data["todo"] as List<dynamic>)
           .map((todo) => todo.toString())
           .toList();
-      List<String> todoList = (await TodoDatabase().getData())
-          .map((todo) => todo.toString())
-          .toList();
+      List<String> todoList =
+          (await TodoDatabase().getData()).map((todo) => todo.id).toList();
       for (var todo in list) {
+        listenTodo(todo);
         if (!todoList.contains(todo)) {
           await FirebaseFirestore.instance
               .collection("todo")
@@ -252,10 +262,22 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           });
         }
       }
-    });
-    streamSub.onDone(() {
+      if (!mounted) return;
       BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
     });
+  }
+
+  Future listenTodo(String id) async {
+    streamSubList.add(FirebaseFirestore.instance
+        .collection("todo")
+        .doc(id)
+        .snapshots()
+        .listen((event) async {
+      Todo todo = Todo.fromSnapshot(event);
+      await TodoDatabase().updateTodo(todo);
+      if (!mounted) return;
+      BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
+    }));
   }
 
   Future syncTodo(List<Todo> todoList) async {
