@@ -64,7 +64,9 @@ class TodoFirebase {
         .get()
         .then((value) {
       var data = value.data() as Map<String, dynamic>;
-      List<String> list = data["todo"] as List<String>;
+      List<String> list = (data["todo"] as List<dynamic>)
+          .map((element) => element.toString())
+          .toList();
       list.remove(id);
       FirebaseFirestore.instance
           .collection("data")

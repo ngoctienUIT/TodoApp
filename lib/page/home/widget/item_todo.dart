@@ -63,7 +63,7 @@ class _ItemTodoState extends State<ItemTodo> {
                       color: widget.todo.status ? Colors.white54 : Colors.white,
                       borderRadius: BorderRadius.circular(90),
                     ),
-                    child: widget.todo.status == true
+                    child: widget.todo.status
                         ? Icon(
                             FontAwesomeIcons.check,
                             color: widget.todo.color,

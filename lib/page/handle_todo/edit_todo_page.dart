@@ -40,9 +40,8 @@ class _EditTodoPageState extends State<EditTodoPage> {
           FocusManager.instance.primaryFocus?.unfocus();
           widget.todo.content = _contentController.text;
           widget.todo.title = _titleController.text;
-          await TodoDatabase().updateTodo(widget.todo);
-          if (!mounted) return;
-          BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
+          BlocProvider.of<TodoBloc>(context)
+              .add(UpdateEvent(todo: widget.todo));
           Navigator.pop(context);
         },
         label: Row(

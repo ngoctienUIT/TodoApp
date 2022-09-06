@@ -12,7 +12,10 @@ class DeleteEvent extends TodoEvent {
   DeleteEvent({required this.todo});
 }
 
-class UpdateEvent extends TodoEvent {}
+class UpdateEvent extends TodoEvent {
+  final Todo? todo;
+  UpdateEvent({this.todo});
+}
 
 class CompleteEvent extends TodoEvent {
   final Todo todo;

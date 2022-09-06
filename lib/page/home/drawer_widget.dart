@@ -37,9 +37,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   void dispose() {
     if (FirebaseAuth.instance.currentUser != null) {
       streamSub.cancel();
-      for (var element in streamSubList) {
-        element.cancel();
-      }
+      cancelListenTodo();
     }
     super.dispose();
   }
@@ -114,9 +112,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         title: "logout".tr,
                         action: () async {
                           streamSub.cancel();
-                          for (var element in streamSubList) {
-                            element.cancel();
-                          }
+                          cancelListenTodo();
                           await FirebaseAuth.instance.signOut();
                           await GoogleSignIn().signOut();
                           setState(() {});
@@ -216,7 +212,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Thông báo'),
-          content: const Text('Bạn có muốn giữ lại task không?'),
+          content: const Text('Bạn có muốn giữ lại task trên máy không?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -249,6 +245,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           .toList();
       List<String> todoList =
           (await TodoDatabase().getData()).map((todo) => todo.id).toList();
+      await cancelListenTodo();
       for (var todo in list) {
         listenTodo(todo);
         if (!todoList.contains(todo)) {
@@ -257,8 +254,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               .doc(todo)
               .get()
               .then((value) async {
-            Todo todoData = Todo.fromSnapshot(value);
-            await TodoDatabase().insertTodo(todoData);
+            if (value.data() != null) {
+              Todo todoData = Todo.fromSnapshot(value);
+              await TodoDatabase().insertTodo(todoData);
+            }
           });
         }
       }
@@ -273,11 +272,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         .doc(id)
         .snapshots()
         .listen((event) async {
-      Todo todo = Todo.fromSnapshot(event);
-      await TodoDatabase().updateTodo(todo);
-      if (!mounted) return;
-      BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
+      if (event.data() != null) {
+        Todo todo = Todo.fromSnapshot(event);
+        await TodoDatabase().updateTodo(todo);
+        if (!mounted) return;
+        BlocProvider.of<TodoBloc>(context).add(UpdateEvent());
+      }
     }));
+  }
+
+  Future cancelListenTodo() async {
+    for (var element in streamSubList) {
+      await element.cancel();
+    }
+    streamSubList = [];
   }
 
   Future syncTodo(List<Todo> todoList) async {

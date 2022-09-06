@@ -38,6 +38,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     });
 
     on<UpdateEvent>((event, emit) async {
+      if (event.todo != null) {
+        await TodoDatabase().updateTodo(event.todo!);
+      }
       emit(Success(list: await TodoDatabase().getData()));
     });
 

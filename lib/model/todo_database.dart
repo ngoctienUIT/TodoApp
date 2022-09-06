@@ -177,4 +177,18 @@ class TodoDatabase {
     final db = await initializeDB();
     await db.rawDelete("Delete * from Image");
   }
+
+  Future deleteFileTodo(String id) async {
+    final db = await initializeDB();
+    await db.delete(
+      "Image",
+      where: "idTodo = ?",
+      whereArgs: [id],
+    );
+    await db.delete(
+      "File",
+      where: "idTodo = ?",
+      whereArgs: [id],
+    );
+  }
 }
