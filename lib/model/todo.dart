@@ -92,7 +92,7 @@ class Todo {
       date: DateFormat("dd/MM/yyyy").parse(data["date"]),
       startTime: stringToTimeOfDate(data["startTime"]),
       finishTime: stringToTimeOfDate(data["finishTime"]),
-      status: data["status"] == 0 ? true : false,
+      status: data["status"] as bool,
       color: Color(data["color"]),
     );
   }

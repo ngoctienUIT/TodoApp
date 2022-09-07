@@ -3,7 +3,7 @@ import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/page/home/widget/item_todo.dart';
 import 'package:todo_app/values/app_styles.dart';
 
-Widget buildItem(List<Todo> todoList, bool filter) {
+Widget buildItem({required List<Todo> todoList, required bool filter}) {
   if (todoList.isEmpty) {
     return Center(
       child: Text(

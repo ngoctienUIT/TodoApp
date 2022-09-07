@@ -183,10 +183,10 @@ class _MyHomeState extends State<MyHome> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return buildItem(
-                                snapshot.data!
+                                todoList: snapshot.data!
                                     .where((element) => checkItem(element))
                                     .toList(),
-                                filter);
+                                filter: filter);
                           }
 
                           return const Center(
@@ -197,10 +197,10 @@ class _MyHomeState extends State<MyHome> {
 
                     if (state is Success) {
                       return buildItem(
-                          state.list
+                          todoList: state.list
                               .where((element) => checkItem(element))
                               .toList(),
-                          filter);
+                          filter: filter);
                     }
 
                     return const Center(

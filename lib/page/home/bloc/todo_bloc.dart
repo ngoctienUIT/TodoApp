@@ -40,12 +40,18 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<UpdateEvent>((event, emit) async {
       if (event.todo != null) {
         await TodoDatabase().updateTodo(event.todo!);
+        if (FirebaseAuth.instance.currentUser != null) {
+          TodoFirebase.updateTodo(event.todo!);
+        }
       }
       emit(Success(list: await TodoDatabase().getData()));
     });
 
     on<CompleteEvent>((event, emit) async {
       removeScheduledNotification(event.todo);
+      if (FirebaseAuth.instance.currentUser != null) {
+        TodoFirebase.updateTodo(event.todo);
+      }
       if (event.todo.status) {
         LocalNotificationManager localNotificationManager =
             LocalNotificationManager.init();

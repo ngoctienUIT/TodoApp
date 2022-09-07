@@ -58,39 +58,36 @@ class TodoFirebase {
   }
 
   static Future deleteTodo(String id) async {
-    FirebaseFirestore.instance
+    var firestore = FirebaseFirestore.instance
         .collection("data")
-        .doc(FirebaseAuth.instance.currentUser!.email)
-        .get()
-        .then((value) {
+        .doc(FirebaseAuth.instance.currentUser!.email);
+
+    firestore.get().then((value) {
       var data = value.data() as Map<String, dynamic>;
       List<String> list = (data["todo"] as List<dynamic>)
           .map((element) => element.toString())
           .toList();
       list.remove(id);
-      FirebaseFirestore.instance
-          .collection("data")
-          .doc(FirebaseAuth.instance.currentUser!.email.toString())
-          .update({"todo": list});
+      firestore.update({"todo": list});
     });
     await FirebaseFirestore.instance.collection("todo").doc(id).delete();
   }
 
   static Future updateTodo(Todo todo) async {
     var firestore = FirebaseFirestore.instance.collection("todo").doc(todo.id);
-    await deleteFolder("images", todo.id);
-    await deleteFolder("files", todo.id);
+    // await deleteFolder("images", todo.id);
+    // await deleteFolder("files", todo.id);
 
-    List<String> imageList = [];
-    for (var image in todo.images) {
-      imageList.add(await uploadFile(image, folder: "images", id: todo.id));
-    }
-    todo.images = imageList;
+    // List<String> imageList = [];
+    // for (var image in todo.images) {
+    //   imageList.add(await uploadFile(image, folder: "images", id: todo.id));
+    // }
+    // todo.images = imageList;
 
-    List<String> fileList = [];
-    for (var file in todo.files) {
-      fileList.add(await uploadFile(file, folder: "files", id: todo.id));
-    }
+    // List<String> fileList = [];
+    // for (var file in todo.files) {
+    //   fileList.add(await uploadFile(file, folder: "files", id: todo.id));
+    // }
     await firestore.update(todo.toMap());
   }
 
